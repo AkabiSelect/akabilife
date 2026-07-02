@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Page not found — AkabiLife</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<meta name="color-scheme" content="light">
+<meta name="theme-color" content="#FBF3E1">
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2032%2032'%3E%3Crect%20width='32'%20height='32'%20rx='7'%20fill='%23211C15'/%3E%3Ctext%20x='16'%20y='23'%20font-family='Georgia,serif'%20font-size='20'%20fill='%23FBF3E1'%20text-anchor='middle'%3EA%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600&family=Hanken+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#FBF3E1; --ink:#211C15; --muted:#726650; --accent:#CE4A0F; --accent-deep:#AE3D0B;
+    --font-serif:"Playfair Display",Georgia,serif; --font-sans:"Hanken Grotesk",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--ink);font-family:var(--font-sans);
+       min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;
+       -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+  .card{max-width:520px;text-align:center}
+  .glyph{width:44px;height:44px;border-radius:11px;background:var(--ink);color:var(--bg);
+         display:inline-flex;align-items:center;justify-content:center;font-family:var(--font-serif);
+         font-weight:500;font-size:1.4rem;margin-bottom:26px}
+  .code{font-family:var(--font-sans);font-size:.72rem;font-weight:600;letter-spacing:.18em;
+        text-transform:uppercase;color:var(--accent-deep)}
+  h1{font-family:var(--font-serif);font-weight:500;letter-spacing:-.02em;line-height:1.05;
+     font-size:clamp(2.2rem,6vw,3.2rem);margin:12px 0 0}
+  p{color:var(--ink);opacity:.8;font-size:1.05rem;line-height:1.6;margin:16px 0 0}
+  a.btn{display:inline-flex;align-items:center;gap:.5rem;margin-top:30px;background:var(--accent);
+        color:#fff;text-decoration:none;font-weight:600;font-size:1rem;padding:14px 26px;border-radius:100px;
+        transition:background .18s}
+  a.btn:hover{background:var(--accent-deep)}
+  :focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+</style>
+</head>
+<body>
+  <div class="card">
+    <div class="glyph" aria-hidden="true">A</div>
+    <div class="code">Error 404</div>
+    <h1>This page took a detour.</h1>
+    <p>The page you're looking for isn't here — but your finances still are. Everything runs in your browser, so nothing was lost.</p>
+    <a class="btn" href="./">Back to AkabiLife →</a>
+  </div>
+</body>
+</html>
