@@ -504,9 +504,19 @@
 
   /* Print */
   @media print{
-    .nav,.foot,.back-link,.actions,.cta button,.tabs,.progress{display:none!important}
-    body{background:#fff}
-    .panel,.kpi,.score,.action{box-shadow:none}
+    @page{ margin:14mm; }
+    /* Force accent/bar colors to render in the PDF (browsers drop backgrounds by default) */
+    *{ -webkit-print-color-adjust:exact !important; print-color-adjust:exact !important; }
+    html,body{ background:#fff !important; }
+    body{ font-size:11pt; }
+    /* Hide interactive chrome so the PDF is just the report */
+    .nav,.foot,.mobile-menu,.back-link,.actions,.cta,.tabs,.progress,.info-wrap{ display:none !important; }
+    #report button, #report .btn{ display:none !important; }
+    .wrap-tool{ padding:0 !important; max-width:none !important; }
+    .panel{ box-shadow:none !important; border:1px solid #E4D9C4; }
+    /* Keep cards and rows from splitting across pages */
+    .panel,.kpis,.kpi,.score,.score-grid,.action,.compare-row,.action-list{ break-inside:avoid; }
+    .kpi{ box-shadow:none !important; }
   }
 </style>
 </head>
@@ -1238,12 +1248,15 @@ function focusView(sel){
   if(el){ el.setAttribute('tabindex','-1'); try{ el.focus({preventScroll:true}); }catch(e){ el.focus(); } }
 }
 function siteVisible(){ return document.getElementById('landing').style.display !== 'none'; }
+// Keep the address bar in sync with the current view (no stale #section hash)
+function clearHash(){ if(location.hash) history.replaceState(null, '', location.pathname + location.search); }
 function backToSite(e, id){
   if(e) e.preventDefault();
   document.getElementById('report').style.display='none';
   document.getElementById('intake').style.display='none';
   var red=document.getElementById('redactor'); if(red) red.style.display='none';
   document.getElementById('landing').style.display='block';
+  if(id) history.replaceState(null, '', '#'+id);
   var el=document.getElementById(id);
   if(el) setTimeout(function(){ el.scrollIntoView({behavior:'smooth'}); }, 30);
   return false;
@@ -1503,6 +1516,7 @@ function restartTool() {
   const red = document.getElementById('redactor');
   if (red) red.style.display = 'none';
   document.getElementById('landing').style.display = 'block';
+  clearHash();
   window.scrollTo({top: 0, behavior: 'smooth'});
 }
 
@@ -1515,6 +1529,7 @@ async function startRedactor() {
   document.getElementById('intake').style.display = 'none';
   document.getElementById('redactor').style.display = 'block';
   focusView('#redactor .tool-head h1');
+  clearHash();
   window.scrollTo({top: 0, behavior: 'smooth'});
   const ok = await ensurePdfLibsLoaded();
   if (!ok) {
@@ -1535,6 +1550,7 @@ function startIntake() {
   document.getElementById('intake').style.display = 'block';
   goto(1);
   focusView('#intake .tool-head h1');
+  clearHash();
   window.scrollTo({top: 0, behavior: 'smooth'});
 }
 
@@ -1876,6 +1892,7 @@ function generateReport() {
   rep.innerHTML = html;
   rep.style.display = 'block';
   focusView('#report .back-link');
+  clearHash();
   window.scrollTo({top: 0, behavior: 'smooth'});
 }
 
