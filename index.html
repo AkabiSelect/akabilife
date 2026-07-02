@@ -1,0 +1,2384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>AkabiLife — Clarity for better decisions</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="A brutally clear, private read on your income, savings, debt and spending — benchmarked to your age and city. Runs entirely in your browser. No account, no uploads.">
+<meta name="color-scheme" content="light">
+<meta name="theme-color" content="#FBF3E1">
+<meta property="og:type" content="website">
+<meta property="og:title" content="AkabiLife — Clarity for better decisions">
+<meta property="og:description" content="A private financial health check and document redactor that runs entirely in your browser. No account, no uploads.">
+<meta property="og:site_name" content="AkabiLife">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="AkabiLife">
+<meta name="twitter:description" content="A private financial health check that runs entirely in your browser. No account, no uploads.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2032%2032'%3E%3Crect%20width='32'%20height='32'%20rx='7'%20fill='%23211C15'/%3E%3Ctext%20x='16'%20y='23'%20font-family='Georgia,serif'%20font-size='20'%20fill='%23FBF3E1'%20text-anchor='middle'%3EA%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  /* ============================================================
+     DESIGN SYSTEM — warm editorial palette (Daylight-inspired)
+     CSS var names kept identical to the original tool so the
+     JS-generated report/redactor markup re-themes automatically.
+     ============================================================ */
+  :root{
+    /* Surfaces */
+    --bg:#FBF3E1;          /* warm cream page */
+    --panel:#FFFCF4;       /* card / warm white */
+    --panel2:#F3E8CE;      /* soft sand — inputs, bar tracks */
+    --ink:#211C15;         /* warm near-black text */
+    --muted:#726650;       /* warm taupe — WCAG AA on cream (~5:1) */
+    /* Brand */
+    --accent:#CE4A0F;      /* solar orange — AA with white button text (4.6:1) */
+    --accent-deep:#AE3D0B;
+    --good:#3D6A4B;        /* forest green (positive) */
+    --warn:#9A6B12;        /* mustard (watch) — AA on light surfaces */
+    --bad:#B23A2E;         /* brick red (alert) */
+    --neutral:#7A6A4E;     /* warm brown (was indigo) */
+    --border:rgba(33,28,21,.13);
+    --border-strong:rgba(33,28,21,.28);
+    /* Type */
+    --font-serif:"Playfair Display",Georgia,"Times New Roman",serif;
+    --font-sans:"Hanken Grotesk",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    --shadow:0 24px 60px -30px rgba(70,45,15,.5);
+    --shadow-sm:0 10px 30px -18px rgba(70,45,15,.45);
+    --nav-h:70px;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+  body{margin:0;background:var(--bg);color:var(--ink);
+       font-family:var(--font-sans);font-size:17px;line-height:1.65;font-weight:400;
+       -webkit-print-color-adjust:exact;print-color-adjust:exact}
+  h1,h2,h3,h4{font-family:var(--font-serif);font-weight:500;letter-spacing:-.01em;line-height:1.08;margin:0}
+  p{margin:0}
+  a{color:inherit}
+  ::selection{background:var(--accent);color:#fff}
+  :focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+  @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+  /* Scroll-reveal — only active once JS adds .anim, so no-JS users see everything */
+  html.anim .reveal{opacity:0;transform:translateY(22px)}
+  html.anim .reveal.in{opacity:1;transform:none;transition:opacity .6s ease,transform .6s ease}
+
+  .container{width:100%;max-width:1200px;margin:0 auto;padding:0 32px}
+  .serif{font-family:var(--font-serif)}
+  .eyebrow{font-family:var(--font-sans);font-size:.72rem;font-weight:600;letter-spacing:.18em;
+           text-transform:uppercase;color:var(--accent-deep)}
+  .rule{height:1px;background:var(--border);border:0;margin:0}
+  section{scroll-margin-top:calc(var(--nav-h) + 16px)}
+
+  /* ---------------- Buttons ---------------- */
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;
+       font-family:var(--font-sans);font-weight:600;font-size:.95rem;line-height:1;
+       cursor:pointer;border:1px solid transparent;border-radius:9px;padding:12px 20px;
+       transition:background .18s,border-color .18s,color .18s,transform .08s;
+       text-decoration:none;white-space:nowrap}
+  .btn:active{transform:translateY(1px)}
+  .btn-primary{background:var(--accent);color:#fff}
+  .btn-primary:hover{background:var(--accent-deep)}
+  .btn-secondary{background:transparent;color:var(--ink);border-color:var(--border-strong)}
+  .btn-secondary:hover{border-color:var(--ink);background:rgba(33,28,21,.05)}
+  .btn-ghost{background:transparent;color:var(--muted);border-color:var(--border)}
+  .btn-ghost:hover{color:var(--ink);border-color:var(--ink)}
+  .btn-good{background:var(--good);color:#fff}
+  .btn-good:hover{filter:brightness(1.08)}
+  .btn-good:disabled{opacity:.45;cursor:not-allowed}
+  .btn-pill{border-radius:100px;padding:15px 30px;font-size:1rem}
+  .btn-lg{padding:16px 30px;font-size:1.02rem}
+
+  /* ---------------- Nav ---------------- */
+  .nav{position:sticky;top:0;z-index:50;height:var(--nav-h);
+       background:rgba(251,243,225,.85);backdrop-filter:blur(12px);
+       border-bottom:1px solid var(--border)}
+  .nav-inner{height:100%;display:flex;align-items:center;justify-content:space-between;gap:24px}
+  .wordmark{display:flex;align-items:center;gap:11px;cursor:pointer;background:none;border:0;
+            font-family:var(--font-serif);font-size:1.28rem;font-weight:500;color:var(--ink);letter-spacing:-.02em}
+  .wordmark .glyph{width:34px;height:34px;border-radius:9px;background:var(--ink);color:var(--bg);
+                   display:flex;align-items:center;justify-content:center;
+                   font-family:var(--font-serif);font-weight:500;font-size:1.05rem}
+  .nav-links{display:flex;align-items:center;gap:30px}
+  .nav-links a{font-size:.95rem;font-weight:500;color:var(--ink);text-decoration:none;opacity:.75;transition:opacity .15s}
+  .nav-links a:hover{opacity:1}
+  .nav-cta{display:flex;align-items:center;gap:12px}
+  .nav-toggle{display:none;background:transparent;border:1px solid var(--border-strong);
+              border-radius:9px;padding:8px;color:var(--ink);cursor:pointer;line-height:0}
+  .nav-toggle:hover{border-color:var(--ink)}
+  .mobile-menu{display:none;position:fixed;top:var(--nav-h);left:0;right:0;z-index:49;
+               background:var(--bg);border-bottom:1px solid var(--border);
+               padding:8px 24px 16px;box-shadow:var(--shadow-sm)}
+  .mobile-menu a{display:block;padding:14px 4px;font-size:1.02rem;font-weight:500;color:var(--ink);
+                 text-decoration:none;border-bottom:1px solid var(--border);cursor:pointer}
+  .mobile-menu a:last-child{border-bottom:0}
+
+  /* ---------------- Hero ---------------- */
+  .hero{padding:clamp(48px,7vw,96px) 0 clamp(40px,5vw,72px)}
+  .hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:clamp(32px,5vw,72px);align-items:center}
+  .hero h1{font-size:clamp(2.7rem,5.4vw,4.7rem);line-height:1.02;letter-spacing:-.025em;margin:20px 0 0}
+  .hero h1 em{font-style:normal;color:var(--accent);font-weight:500}
+  .hero .lede{font-size:clamp(1.05rem,1.5vw,1.22rem);color:var(--ink);opacity:.82;
+              max-width:34ch;margin:22px 0 0;line-height:1.6}
+  .hero-actions{display:flex;flex-wrap:wrap;gap:14px;margin-top:30px}
+  .hero-micro{margin-top:18px;font-size:.86rem;color:var(--muted);display:flex;gap:16px;flex-wrap:wrap}
+  .hero-micro span{display:inline-flex;align-items:center;gap:6px}
+  .dot{width:5px;height:5px;border-radius:50%;background:var(--accent);display:inline-block}
+
+  /* Snapshot card (SVG-ish HTML mockup) */
+  .snap{background:var(--panel);border:1px solid var(--border);border-radius:20px;
+        box-shadow:var(--shadow);padding:24px;position:relative}
+  .snap:before{content:"";position:absolute;inset:0;border-radius:20px;
+               box-shadow:inset 0 1px 0 rgba(255,255,255,.6);pointer-events:none}
+  .snap-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:16px}
+  .snap-head h4{font-size:1.15rem}
+  .snap-head .tag{font-size:.68rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;
+                  color:var(--good);background:rgba(61,106,75,.12);padding:4px 9px;border-radius:6px}
+  .snap-kpis{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px}
+  .snap-kpi{background:var(--panel2);border-radius:12px;padding:13px 14px}
+  .snap-kpi .l{font-size:.66rem;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);font-weight:600}
+  .snap-kpi .v{font-family:var(--font-serif);font-size:1.55rem;margin-top:3px;letter-spacing:-.02em}
+  .snap-kpi .v.g{color:var(--good)} .snap-kpi .v.b{color:var(--bad)}
+  .snap-bars{display:flex;flex-direction:column;gap:11px}
+  .snap-bar .top{display:flex;justify-content:space-between;font-size:.78rem;margin-bottom:5px;color:var(--muted)}
+  .snap-bar .top b{color:var(--ink);font-weight:600}
+  .snap-track{height:8px;border-radius:5px;background:var(--panel2);position:relative;overflow:hidden}
+  .snap-track i{position:absolute;left:0;top:0;height:100%;border-radius:5px;display:block}
+  .snap-track .avg{position:absolute;top:-3px;bottom:-3px;width:2px;background:var(--neutral);opacity:.55}
+
+  /* ---------------- Trust strip ---------------- */
+  .trust{border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+  .trust-grid{display:grid;grid-template-columns:repeat(3,1fr)}
+  .trust-item{padding:26px 0;display:flex;gap:14px;align-items:flex-start}
+  .trust-item + .trust-item{border-left:1px solid var(--border);padding-left:32px}
+  .trust-item .ic{flex:0 0 auto;width:38px;height:38px;border-radius:10px;background:var(--panel2);
+                  display:flex;align-items:center;justify-content:center;color:var(--accent)}
+  .trust-item h4{font-family:var(--font-sans);font-size:.98rem;font-weight:700;margin-bottom:3px}
+  .trust-item p{font-size:.88rem;color:var(--muted);line-height:1.5}
+
+  /* ---------------- Section scaffolding ---------------- */
+  .sec{padding:clamp(56px,8vw,110px) 0}
+  .sec-head{max-width:640px;margin-bottom:clamp(36px,5vw,60px)}
+  .sec-head h2{font-size:clamp(2rem,3.6vw,3.1rem);letter-spacing:-.02em;margin:14px 0 0}
+  .sec-head p{font-size:1.08rem;color:var(--ink);opacity:.78;margin-top:16px;line-height:1.6}
+
+  /* Tools — two editorial columns split by a rule */
+  .tools-grid{display:grid;grid-template-columns:1fr 1fr;gap:0}
+  .tool-col{padding:8px clamp(28px,3vw,48px) 8px 0}
+  .tool-col:last-child{border-left:1px solid var(--border);padding:8px 0 8px clamp(28px,3vw,48px)}
+  .tool-col .num{font-family:var(--font-serif);font-size:2.4rem;color:var(--accent);line-height:1}
+  .tool-col h3{font-size:1.85rem;margin:14px 0 12px}
+  .tool-col > p{color:var(--ink);opacity:.8;line-height:1.6;margin-bottom:20px;max-width:44ch}
+  .tool-list{list-style:none;padding:0;margin:0 0 26px}
+  .tool-list li{position:relative;padding:9px 0 9px 30px;font-size:.96rem;
+                border-top:1px solid var(--border)}
+  .tool-list li:before{content:"";position:absolute;left:2px;top:16px;width:12px;height:12px;
+                       border-radius:50%;border:2px solid var(--accent)}
+  .demo-row{margin-top:44px;padding-top:34px;border-top:1px solid var(--border)}
+  .demo-cards{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
+  .demo-card{text-align:left;background:var(--panel);border:1px solid var(--border);border-radius:14px;
+             padding:18px 20px;cursor:pointer;transition:border-color .15s,transform .12s;font-family:var(--font-sans)}
+  .demo-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+  .demo-card .who{font-size:1.02rem;font-weight:700;color:var(--ink)}
+  .demo-card .ctx{font-size:.84rem;color:var(--muted);margin-top:4px}
+  .demo-card .go{font-size:.82rem;color:var(--accent);font-weight:600;margin-top:12px;display:inline-block}
+
+  /* How it works — sand band, numbered steps */
+  .band-sand{background:var(--panel2)}
+  .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:36px;margin-top:8px}
+  .step-c{position:relative}
+  .step-c .idx{font-family:var(--font-serif);font-size:1.05rem;color:var(--accent);
+               border:1px solid var(--accent);width:40px;height:40px;border-radius:50%;
+               display:flex;align-items:center;justify-content:center;margin-bottom:18px}
+  .step-c h3{font-size:1.35rem;margin-bottom:8px}
+  .step-c p{font-size:.96rem;color:var(--ink);opacity:.78;line-height:1.55}
+
+  /* Sample report showcase */
+  .show-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:clamp(36px,5vw,64px);align-items:center}
+  .show-list{list-style:none;padding:0;margin:24px 0 0}
+  .show-list li{padding:16px 0;border-top:1px solid var(--border);display:flex;gap:16px}
+  .show-list li:last-child{border-bottom:1px solid var(--border)}
+  .show-list .k{font-family:var(--font-serif);font-size:1.15rem;color:var(--accent);flex:0 0 26px}
+  .show-list h4{font-family:var(--font-sans);font-size:1rem;font-weight:700;margin-bottom:2px}
+  .show-list p{font-size:.9rem;color:var(--muted);line-height:1.5}
+
+  /* Dark band */
+  .band-dark{background:var(--ink);color:var(--bg)}
+  .band-dark .eyebrow{color:#E9A66B}
+  .quote{max-width:900px}
+  .quote p{font-family:var(--font-serif);font-size:clamp(1.9rem,3.6vw,3rem);line-height:1.18;
+           letter-spacing:-.02em;margin-top:20px;font-weight:400}
+  .quote p em{font-style:normal;color:#E9A66B}
+  .quote .by{margin-top:26px;font-size:.95rem;color:rgba(251,243,225,.6)}
+
+  /* Stats band */
+  .stats-band{display:grid;grid-template-columns:repeat(4,1fr);gap:24px}
+  .stat-b{padding:8px 0}
+  .stat-b .n{font-family:var(--font-serif);font-size:clamp(2.6rem,5vw,4rem);letter-spacing:-.03em;line-height:1}
+  .stat-b .l{font-size:.9rem;color:var(--muted);margin-top:8px;max-width:22ch}
+
+  /* Final CTA — full-bleed orange */
+  .cta-band{background:var(--accent);color:#fff;text-align:center}
+  .cta-band h2{font-size:clamp(2.2rem,4.6vw,3.6rem);letter-spacing:-.02em;color:#fff}
+  .cta-band p{max-width:52ch;margin:18px auto 0;font-size:1.1rem;color:rgba(255,255,255,.9)}
+  .cta-band .btn-secondary{background:#fff;color:var(--accent);border-color:#fff}
+  .cta-band .btn-secondary:hover{background:rgba(255,255,255,.9)}
+
+  /* Legal disclaimer */
+  .disclaimer{max-width:940px}
+  .disclaimer h2{font-size:clamp(1.7rem,3vw,2.4rem);margin:14px 0 0}
+  .disclaimer-body{margin-top:24px;border-top:1px solid var(--border);padding-top:24px}
+  .disclaimer-body p{color:var(--ink);opacity:.86;font-size:.92rem;line-height:1.75;margin-bottom:14px}
+  .disclaimer-body p:last-child{margin-bottom:0}
+  .disclaimer-body strong{opacity:1;color:var(--ink);font-weight:700}
+  .disclaimer-note{margin-top:18px;font-size:.82rem;color:var(--muted);font-style:italic}
+
+  /* Footer */
+  .foot{background:var(--ink);color:rgba(251,243,225,.72);padding:64px 0 40px}
+  .foot-top{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:32px;padding-bottom:40px;
+            border-bottom:1px solid rgba(251,243,225,.14)}
+  .foot .wordmark{color:var(--bg)}
+  .foot .wordmark .glyph{background:var(--bg);color:var(--ink)}
+  .foot h5{font-family:var(--font-sans);font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;
+           color:rgba(251,243,225,.5);margin:0 0 14px;font-weight:600}
+  .foot a{display:block;color:rgba(251,243,225,.72);text-decoration:none;font-size:.94rem;
+          padding:5px 0;background:none;border:0;cursor:pointer;font-family:var(--font-sans);text-align:left}
+  .foot a:hover{color:var(--bg)}
+  .foot-blurb{font-size:.92rem;color:rgba(251,243,225,.6);max-width:34ch;margin-top:16px;line-height:1.6}
+  .foot-liability{padding-top:22px;font-size:.78rem;line-height:1.65;color:rgba(251,243,225,.5);
+                  max-width:920px}
+  .foot-liability a{color:rgba(251,243,225,.8)}
+  .foot-bottom{padding-top:18px;margin-top:18px;border-top:1px solid rgba(251,243,225,.12);
+               font-size:.82rem;color:rgba(251,243,225,.45);
+               display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+
+  /* ============================================================
+     TOOL UI — retuned for the cream theme (classes preserved)
+     ============================================================ */
+  .wrap-tool{max-width:1080px;margin:0 auto;padding:36px 32px 90px}
+  .back-link{display:inline-flex;align-items:center;gap:7px;color:var(--muted);
+             text-decoration:none;font-size:.9rem;font-weight:600;margin-bottom:22px;
+             cursor:pointer;background:transparent;border:none;padding:6px 0;font-family:var(--font-sans)}
+  .back-link:hover{color:var(--accent)}
+  .tool-head{margin-bottom:26px}
+  .tool-head h1{font-size:clamp(1.9rem,3.4vw,2.6rem);letter-spacing:-.02em}
+  .tool-head .sub{color:var(--muted);font-size:.98rem;margin-top:8px}
+
+  /* Progress */
+  .progress{display:flex;gap:6px;margin-bottom:22px}
+  .progress-bar{flex:1;height:4px;background:var(--panel2);border-radius:2px;overflow:hidden}
+  .progress-bar .fill{height:100%;background:var(--accent);width:0;transition:width .3s}
+  .progress-bar.done .fill{background:var(--good);width:100%}
+  .progress-bar.active .fill{width:100%}
+
+  /* Tabs */
+  .tabs{display:flex;gap:4px;background:transparent;border-bottom:1px solid var(--border);
+        padding:0;overflow-x:auto;margin-bottom:0}
+  .tab{padding:12px 18px;background:transparent;color:var(--muted);cursor:pointer;
+       font-size:.92rem;font-weight:600;border:none;border-bottom:2px solid transparent;
+       transition:all .15s;white-space:nowrap;font-family:var(--font-sans);margin-bottom:-1px}
+  .tab.active{color:var(--ink);border-bottom-color:var(--accent)}
+  .tab:hover:not(.active){color:var(--ink)}
+  .tab .num{display:inline-block;width:21px;height:21px;line-height:21px;border-radius:50%;
+            background:var(--panel2);color:var(--ink);font-size:.72rem;text-align:center;
+            margin-right:9px;font-weight:700}
+  .tab.active .num{background:var(--accent);color:#fff}
+
+  /* Panels */
+  .panel{background:var(--panel);border:1px solid var(--border);border-radius:16px;
+         padding:30px;margin-bottom:22px;box-shadow:var(--shadow-sm)}
+  .panel.round{border-radius:16px}
+  .panel h2{font-size:1.4rem;font-weight:500;margin:0 0 6px}
+  .panel .desc{color:var(--muted);font-size:.94rem;margin-bottom:22px;line-height:1.55}
+
+  /* Forms */
+  .grid{display:grid;gap:18px}
+  .grid.cols-2{grid-template-columns:1fr 1fr}
+  .grid.cols-3{grid-template-columns:1fr 1fr 1fr}
+  .grid.cols-4{grid-template-columns:repeat(4,1fr)}
+  @media (max-width:720px){.grid.cols-2,.grid.cols-3,.grid.cols-4{grid-template-columns:1fr}}
+  .field{display:flex;flex-direction:column;gap:7px}
+  .field label{font-size:.8rem;color:var(--ink);font-weight:600;letter-spacing:.01em}
+  .field label .req{color:var(--bad);margin-left:2px}
+  .field label .hint{color:var(--muted);font-weight:400;font-size:.76rem;margin-left:6px}
+  .field input,.field select{background:var(--panel);border:1px solid var(--border-strong);
+    color:var(--ink);padding:11px 13px;border-radius:9px;font-size:.95rem;
+    font-family:var(--font-sans);transition:border .15s,box-shadow .15s;width:100%}
+  .field input:focus,.field select:focus{outline:none;border-color:var(--accent);
+    box-shadow:0 0 0 3px rgba(221,85,28,.14)}
+  .field input::placeholder{color:#b6a88c}
+  .field.money input{padding-left:26px}
+  .field.money{position:relative}
+  .field.money::before{content:'$';position:absolute;left:12px;top:35px;color:var(--muted);
+                       font-size:.95rem;pointer-events:none}
+  .field.pct input{padding-right:30px}
+  .field.pct::after{content:'%';position:absolute;right:13px;top:35px;color:var(--muted);
+                    font-size:.95rem;pointer-events:none}
+  .field.pct{position:relative}
+  .section-title{grid-column:1/-1;margin:12px 0 2px;font-family:var(--font-sans);font-size:.76rem;
+                 font-weight:700;color:var(--accent);letter-spacing:.1em;text-transform:uppercase;
+                 padding-bottom:8px;border-bottom:1px solid var(--border)}
+
+  .actions{display:flex;justify-content:space-between;align-items:center;margin-top:28px;gap:12px;flex-wrap:wrap}
+
+  /* Privacy note */
+  .privacy-note{background:rgba(61,106,75,.08);border:1px solid rgba(61,106,75,.28);
+                border-radius:11px;padding:14px 16px;font-size:.86rem;color:var(--ink);
+                margin-bottom:18px;line-height:1.6}
+  .privacy-note strong{color:var(--good)}
+
+  /* Report */
+  .report{display:none}
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:22px}
+  @media (max-width:720px){.kpis{grid-template-columns:repeat(2,1fr)}}
+  .kpi{background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:20px;
+       position:relative;box-shadow:var(--shadow-sm)}
+  .kpi:hover{z-index:5}
+  .kpi .label{font-size:.66rem;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;font-weight:700}
+  .kpi .value{font-family:var(--font-serif);font-size:1.9rem;font-weight:500;margin-top:8px;letter-spacing:-.02em}
+  .kpi .delta{font-size:.78rem;margin-top:4px;color:var(--muted)}
+  .kpi.good .value{color:var(--good)} .kpi.warn .value{color:var(--warn)}
+  .kpi.bad .value{color:var(--bad)} .kpi.neutral .value{color:var(--accent)}
+
+  /* Comparison rows */
+  .compare-row{display:grid;grid-template-columns:180px 1fr 74px;gap:14px;align-items:center;
+               padding:13px 0;border-bottom:1px solid var(--border);font-size:.9rem}
+  .compare-row:last-child{border-bottom:none}
+  .compare-label{color:var(--ink);font-size:.86rem;font-weight:500}
+  .bar-wrap{position:relative;height:28px;background:var(--panel2);border-radius:7px;overflow:hidden}
+  .bar-avg{position:absolute;top:0;left:0;height:100%;background:rgba(122,106,78,.22);
+           border-right:2px dashed var(--neutral)}
+  .bar-you{position:absolute;top:6px;left:0;height:16px;background:var(--good);border-radius:4px}
+  .bar-you.bad{background:var(--accent)}
+  .bar-labels{position:absolute;right:5px;top:50%;transform:translateY(-50%);
+              font-size:.74rem;color:var(--ink);font-weight:600;white-space:nowrap;
+              background:rgba(255,252,244,.9);padding:2px 7px;border-radius:5px;
+              box-shadow:0 0 0 1px rgba(33,28,21,.05)}
+  .compare-tag{font-size:.74rem;font-weight:700;padding:4px 8px;border-radius:6px;text-align:center}
+  .tag-good{background:rgba(61,106,75,.16);color:var(--good)}
+  .tag-bad{background:rgba(178,58,46,.14);color:var(--bad)}
+  .tag-warn{background:rgba(185,130,23,.16);color:var(--warn)}
+
+  /* Info tooltip (metric explanations) */
+  .info-wrap{position:relative;display:inline-flex;align-items:center;vertical-align:middle;margin-left:5px}
+  .info-icon{width:15px;height:15px;border-radius:50%;background:var(--panel2);
+    border:1px solid var(--border-strong);color:var(--muted);font-size:.64rem;font-weight:700;
+    font-style:italic;font-family:Georgia,"Times New Roman",serif;display:inline-flex;
+    align-items:center;justify-content:center;cursor:pointer;padding:0;line-height:1;
+    transition:background .15s,color .15s,border-color .15s}
+  .info-icon:hover,.info-icon:focus-visible{background:var(--accent);border-color:var(--accent);
+    color:#fff;outline:none}
+  .info-tooltip{position:absolute;bottom:calc(100% + 9px);left:50%;transform:translateX(-50%) translateY(4px);
+    width:220px;max-width:60vw;background:var(--ink);color:var(--bg);font-size:.76rem;font-weight:400;
+    line-height:1.45;padding:10px 12px;border-radius:9px;box-shadow:var(--shadow-sm);
+    opacity:0;visibility:hidden;transition:opacity .15s,transform .15s;z-index:30;
+    pointer-events:none;text-transform:none;letter-spacing:normal;text-align:left}
+  .info-tooltip::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);
+    border:6px solid transparent;border-top-color:var(--ink)}
+  .info-wrap:hover .info-tooltip,.info-wrap.open .info-tooltip,.info-icon:focus-visible ~ .info-tooltip{
+    opacity:1;visibility:visible;transform:translateX(-50%) translateY(0);pointer-events:auto}
+  .kpi .info-wrap{margin-left:6px}
+  .kpi .info-wrap .info-tooltip{bottom:auto;top:calc(100% + 9px);left:0;transform:translateY(-4px)}
+  .kpi .info-wrap .info-tooltip::after{top:auto;bottom:100%;left:14px;transform:none;
+    border-top-color:transparent;border-bottom-color:var(--ink)}
+  .kpi .info-wrap:hover .info-tooltip,.kpi .info-wrap.open .info-tooltip{transform:translateY(0)}
+  @media print{.info-wrap{display:none}}
+
+  /* Scorecard */
+  .score-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  @media (max-width:720px){.score-grid{grid-template-columns:1fr}}
+  .score{padding:18px;border-radius:13px;background:var(--panel2)}
+  .score h3{margin:0 0 10px;font-family:var(--font-sans);font-size:.98rem;font-weight:700;display:flex;align-items:center;gap:6px}
+  .score ul{margin:0;padding-left:18px;font-size:.82rem;line-height:1.7;color:var(--ink)}
+  .score ul strong{font-weight:700}
+  .score.good{border-left:4px solid var(--good)} .score.good h3{color:var(--good)}
+  .score.warn{border-left:4px solid var(--warn)} .score.warn h3{color:var(--warn)}
+  .score.bad{border-left:4px solid var(--bad)} .score.bad h3{color:var(--bad)}
+
+  /* Actions / suggestions */
+  .action-list{display:flex;flex-direction:column;gap:12px}
+  .action{display:flex;gap:14px;padding:16px;background:var(--panel2);border-radius:12px;border-left:4px solid var(--accent)}
+  .action .num{font-family:var(--font-serif);font-size:1.4rem;color:var(--accent);min-width:28px}
+  .action h4{margin:0 0 4px;font-family:var(--font-sans);font-size:.98rem;font-weight:700}
+  .action p{margin:0;font-size:.86rem;color:var(--ink);opacity:.85;line-height:1.55}
+  .action.urgent{border-left-color:var(--bad)}.action.urgent .num{color:var(--bad)}
+  .action.high{border-left-color:var(--warn)}.action.high .num{color:var(--warn)}
+  .action.med{border-left-color:var(--neutral)}.action.med .num{color:var(--neutral)}
+
+  /* CTA inside report */
+  .cta{background:rgba(221,85,28,.08);border:1px solid rgba(221,85,28,.35);
+       border-radius:16px;padding:28px;text-align:center;margin-top:24px}
+  .cta h3{margin:0 0 8px;font-size:1.35rem;color:var(--ink)}
+  .cta p{margin:0 0 18px;color:var(--ink);opacity:.82;font-size:.94rem;line-height:1.6}
+
+  /* Redactor */
+  .drop{border:2px dashed var(--border-strong);border-radius:16px;padding:52px 24px;text-align:center;
+        background:rgba(221,85,28,.03);transition:all .2s;cursor:pointer;display:block}
+  .drop:hover{border-color:var(--accent);background:rgba(221,85,28,.06)}
+  .drop.dragover{border-color:var(--good);background:rgba(61,106,75,.08);transform:scale(1.01)}
+  .drop .drop-icon{font-size:44px;margin-bottom:14px}
+  .drop h3{margin:0 0 8px;font-size:1.3rem}
+  .drop p{margin:0;color:var(--muted);font-size:.9rem;line-height:1.5}
+  .drop input{display:none}
+  .drop .browse{color:var(--accent);text-decoration:underline;cursor:pointer}
+  .file{background:var(--panel2);border-radius:12px;padding:15px 17px;margin-bottom:10px;
+        display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+  .file .info{display:flex;align-items:center;gap:12px;flex:1;min-width:200px}
+  .file .fname{font-weight:700;font-size:.94rem}
+  .file .fmeta{color:var(--muted);font-size:.82rem;margin-top:2px}
+  .file .fstatus{font-size:.68rem;padding:4px 10px;border-radius:6px;font-weight:700;letter-spacing:.05em;text-transform:uppercase}
+  .status-pending{background:rgba(138,124,100,.18);color:var(--muted)}
+  .status-processing{background:rgba(221,85,28,.16);color:var(--accent)}
+  .status-ready{background:rgba(61,106,75,.16);color:var(--good)}
+  .status-error{background:rgba(178,58,46,.16);color:var(--bad)}
+  .expand{margin-left:auto;background:transparent;border:1px solid var(--border-strong);color:var(--ink);
+          padding:7px 13px;border-radius:8px;cursor:pointer;font-size:.82rem;font-family:var(--font-sans)}
+  .expand:hover{border-color:var(--accent)}
+  .details{background:var(--panel);border-radius:12px;padding:18px;margin:8px 0 16px;border:1px solid var(--border)}
+  .details h2{margin:0 0 6px;font-size:1.05rem}
+  .detection-list{display:grid;grid-template-columns:1fr;gap:6px;max-height:400px;overflow-y:auto}
+  .detection{display:flex;align-items:center;gap:12px;padding:9px 11px;background:var(--panel2);border-radius:8px;font-size:.82rem}
+  .detection label{display:flex;align-items:center;gap:8px;cursor:pointer;flex:1;flex-wrap:wrap}
+  .detection input[type=checkbox]{width:16px;height:16px;accent-color:var(--accent);cursor:pointer}
+  .detection .dtype{font-size:.62rem;padding:2px 8px;border-radius:5px;font-weight:700;
+                    text-transform:uppercase;letter-spacing:.04em;min-width:80px;text-align:center}
+  .type-ssn,.type-ein{background:rgba(178,58,46,.16);color:var(--bad)}
+  .type-phone,.type-routing{background:rgba(185,130,23,.16);color:var(--warn)}
+  .type-email{background:rgba(221,85,28,.16);color:var(--accent)}
+  .type-account,.type-cc{background:rgba(61,106,75,.16);color:var(--good)}
+  .type-custom{background:rgba(122,106,78,.16);color:var(--neutral)}
+  .detection .value{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:.8rem;color:var(--ink);flex:1;min-width:100px}
+  .detection .page{color:var(--muted);font-size:.72rem;white-space:nowrap}
+  .detection .mask{font-size:.68rem;color:var(--muted);white-space:nowrap}
+  .custom-terms{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+  .term{background:var(--panel2);border-radius:8px;padding:7px 11px;font-size:.82rem;display:inline-flex;align-items:center;gap:6px}
+  .term button{background:transparent;border:none;color:var(--muted);cursor:pointer;font-size:1rem;padding:0;line-height:1}
+  .term button:hover{color:var(--bad)}
+  .term-input{flex:1;min-width:220px;background:var(--panel);border:1px solid var(--border-strong);color:var(--ink);
+              padding:11px 13px;border-radius:9px;font-size:.9rem;font-family:var(--font-sans)}
+  .term-input:focus{outline:none;border-color:var(--accent)}
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:18px 0}
+  @media (max-width:640px){.stats{grid-template-columns:repeat(2,1fr)}}
+  .stat{background:var(--panel2);border-radius:10px;padding:14px;text-align:center}
+  .stat .n{font-family:var(--font-serif);font-size:1.5rem;font-weight:500;color:var(--ink)}
+  .stat .l{font-size:.66rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;font-weight:600;margin-top:3px}
+
+  /* ---------------- Responsive ---------------- */
+  @media (max-width:900px){
+    .nav-links{display:none}
+    .nav-toggle{display:inline-flex;align-items:center;justify-content:center}
+    .mobile-menu:not([hidden]){display:block}
+    .hero-grid{grid-template-columns:1fr;gap:40px}
+    .snap-order{order:-1}
+    .tools-grid{grid-template-columns:1fr;gap:44px}
+    .tool-col:last-child{border-left:0;padding:8px 0;border-top:1px solid var(--border);padding-top:44px}
+    .tool-col{padding:0}
+    .steps{grid-template-columns:1fr;gap:28px}
+    .show-grid{grid-template-columns:1fr}
+    .stats-band{grid-template-columns:1fr 1fr;gap:32px}
+    .foot-top{grid-template-columns:1fr 1fr}
+    .trust-grid{grid-template-columns:1fr}
+    .trust-item + .trust-item{border-left:0;padding-left:0;border-top:1px solid var(--border)}
+    .demo-cards{grid-template-columns:1fr}
+  }
+  @media (max-width:560px){
+    body{font-size:16px}
+    .container{padding:0 20px}
+    .wordmark{font-size:1.05rem;gap:9px}
+    .wordmark .wm-text{display:none}
+    .nav-inner{gap:12px}
+    .nav .btn-primary{padding:11px 15px;font-size:.9rem}
+    .wrap-tool{padding:26px 20px 70px}
+    .stats-band{grid-template-columns:1fr 1fr;gap:22px}
+    .foot-top{grid-template-columns:1fr}
+    .hero-actions .btn{flex:1}
+  }
+  @media (max-width:600px){
+    /* Stack the peer-comparison rows so the bar gets full width on phones */
+    .compare-row{grid-template-columns:1fr auto;gap:6px 10px;padding:12px 0}
+    .compare-label{grid-column:1;order:1;align-self:center}
+    .compare-tag{grid-column:2;order:2;justify-self:end;align-self:center}
+    .bar-wrap{grid-column:1 / -1;order:3}
+    .panel{padding:22px}
+    .kpi{padding:16px}
+  }
+
+  /* Print */
+  @media print{
+    .nav,.foot,.back-link,.actions,.cta button,.tabs,.progress{display:none!important}
+    body{background:#fff}
+    .panel,.kpi,.score,.action{box-shadow:none}
+  }
+</style>
+</head>
+<body>
+
+<!-- ============================ NAV ============================ -->
+<nav class="nav">
+  <div class="container nav-inner">
+    <button class="wordmark" onclick="restartTool()" aria-label="AkabiLife — home">
+      <span class="glyph" aria-hidden="true">A</span> <span class="wm-text">AkabiLife</span>
+    </button>
+    <div class="nav-links">
+      <a href="#tools" onclick="if(!siteVisible())return backToSite(event,'tools')">The tools</a>
+      <a href="#how" onclick="if(!siteVisible())return backToSite(event,'how')">How it works</a>
+      <a href="#sample" onclick="if(!siteVisible())return backToSite(event,'sample')">What you get</a>
+      <a href="#privacy" onclick="if(!siteVisible())return backToSite(event,'privacy')">Privacy</a>
+    </div>
+    <div class="nav-cta">
+      <button class="btn btn-primary" onclick="startFinancialCheck()">Start free check</button>
+      <button class="nav-toggle" id="navToggle" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu" onclick="toggleMenu()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+    </div>
+  </div>
+  <div class="mobile-menu" id="mobileMenu" hidden>
+    <a onclick="menuNav('tools')">The tools</a>
+    <a onclick="menuNav('how')">How it works</a>
+    <a onclick="menuNav('sample')">What you get</a>
+    <a onclick="menuNav('privacy')">Privacy</a>
+    <a onclick="menuNav('disclaimer')">Disclaimer</a>
+  </div>
+</nav>
+
+<!-- ============================ SITE / LANDING ============================ -->
+<div id="landing">
+
+  <!-- HERO -->
+  <header class="hero">
+    <div class="container hero-grid">
+      <div>
+        <span class="eyebrow">Free · Private · No account</span>
+        <h1>See your money the way an <em>auditor</em> would.</h1>
+        <p class="lede">A brutally clear read on your income, savings, debt and spending — benchmarked against real people in your age band and city. It all runs in this browser tab. Nothing is uploaded.</p>
+        <div class="hero-actions">
+          <button class="btn btn-primary btn-pill btn-lg" onclick="startFinancialCheck()">Start your free check →</button>
+          <button class="btn btn-secondary btn-pill btn-lg" onclick="startRedactor()">Redact a document</button>
+        </div>
+        <div class="hero-micro">
+          <span><i class="dot"></i> ~4 minutes</span>
+          <span><i class="dot"></i> 52 US metros</span>
+          <span><i class="dot"></i> 100% in your browser</span>
+        </div>
+      </div>
+
+      <!-- Product snapshot mockup -->
+      <div class="snap snap-order" aria-hidden="true">
+        <div class="snap-head">
+          <h4>Your Financial Snapshot</h4>
+          <span class="tag">Preview</span>
+        </div>
+        <div class="snap-kpis">
+          <div class="snap-kpi"><div class="l">Net Worth</div><div class="v g">$186K</div></div>
+          <div class="snap-kpi"><div class="l">Monthly Surplus</div><div class="v g">$1,240</div></div>
+          <div class="snap-kpi"><div class="l">Emergency Fund</div><div class="v b">1.8 mo</div></div>
+          <div class="snap-kpi"><div class="l">Savings Rate</div><div class="v">14%</div></div>
+        </div>
+        <div class="snap-bars">
+          <div class="snap-bar">
+            <div class="top">Net income <b>You: $6.4K · Avg: $5.5K</b></div>
+            <div class="snap-track"><i style="width:82%;background:var(--good)"></i><span class="avg" style="left:70%"></span></div>
+          </div>
+          <div class="snap-bar">
+            <div class="top">Retirement <b>You: $118K · Avg: $142K</b></div>
+            <div class="snap-track"><i style="width:58%;background:var(--good)"></i><span class="avg" style="left:70%"></span></div>
+          </div>
+          <div class="snap-bar">
+            <div class="top">Housing % of income <b>You: 38% · Avg: 30%</b></div>
+            <div class="snap-track"><i style="width:76%;background:var(--accent)"></i><span class="avg" style="left:60%"></span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- TRUST STRIP -->
+  <section id="privacy" class="trust">
+    <div class="container trust-grid">
+      <div class="trust-item">
+        <div class="ic">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        </div>
+        <div><h4>Runs in your browser</h4><p>Every calculation and every redaction happens on this device. No server ever sees your numbers.</p></div>
+      </div>
+      <div class="trust-item">
+        <div class="ic">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </div>
+        <div><h4>No account, no name</h4><p>We never ask for your name, email, or address — only your metro, to adjust for cost of living.</p></div>
+      </div>
+      <div class="trust-item">
+        <div class="ic">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+        </div>
+        <div><h4>Close the tab, it's gone</h4><p>Nothing is stored or saved. Refresh or close the page and every number you entered disappears.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TOOLS -->
+  <section id="tools" class="sec">
+    <div class="container">
+      <div class="sec-head">
+        <span class="eyebrow">Two tools, one goal</span>
+        <h2>Understand your finances — and protect them before you share.</h2>
+        <p>One tells you honestly where you stand. The other strips the sensitive details out of your statements so you can hand them to an analyst without handing over your identity.</p>
+      </div>
+
+      <div class="tools-grid">
+        <div class="tool-col">
+          <div class="num">01</div>
+          <h3>Financial Health Check</h3>
+          <p>Answer ~30 quick questions about your household, income, savings, debts and spending. Get a benchmark report comparing you to peers in your age band and metro — plus specific, ranked improvements.</p>
+          <ul class="tool-list">
+            <li>52 US metros with cost-of-living adjustment</li>
+            <li>Age-band + household-size peer benchmarks</li>
+            <li>Personalized, prioritized action list</li>
+          </ul>
+          <button class="btn btn-primary btn-pill" onclick="startFinancialCheck()">Start financial check →</button>
+        </div>
+
+        <div class="tool-col">
+          <div class="num">02</div>
+          <h3>Document Redactor</h3>
+          <p>Strip personal data out of bank statements, W-2s, paystubs and other financial PDFs before sending them to a third-party analyst, accountant or planner.</p>
+          <ul class="tool-list">
+            <li>Auto-detects SSN, phone, email, account &amp; card numbers</li>
+            <li>Account numbers masked to the last four (••1234)</li>
+            <li>True redaction — the underlying text bytes are removed</li>
+          </ul>
+          <button class="btn btn-secondary btn-pill" onclick="startRedactor()">Open the redactor →</button>
+        </div>
+      </div>
+
+      <div class="demo-row">
+        <span class="eyebrow">Not ready to enter your own numbers?</span>
+        <div style="font-family:var(--font-serif);font-size:1.4rem;margin:8px 0 4px">Preview a demo report instead</div>
+        <div class="demo-cards">
+          <button class="demo-card" onclick="loadDemo('demo_28f')">
+            <div class="who">Average 28-year-old · Single, no kids</div>
+            <div class="ctx">Renter in Austin, TX · credit-card &amp; student-loan debt</div>
+            <span class="go">See this report →</span>
+          </button>
+          <button class="demo-card" onclick="loadDemo('demo_45m')">
+            <div class="who">Average 45-year-old · Married, 2 kids</div>
+            <div class="ctx">Homeowner in Charlotte, NC · dual income</div>
+            <span class="go">See this report →</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section id="how" class="sec band-sand">
+    <div class="container">
+      <div class="sec-head">
+        <span class="eyebrow">How it works</span>
+        <h2>Three steps. About four minutes. Zero paperwork.</h2>
+      </div>
+      <div class="steps">
+        <div class="step-c">
+          <div class="idx">1</div>
+          <h3>Answer the intake</h3>
+          <p>Five short sections — household, income, assets, debts and expenses. Round numbers are fine; the estimates just need to be honest.</p>
+        </div>
+        <div class="step-c">
+          <div class="idx">2</div>
+          <h3>See your benchmark</h3>
+          <p>Instantly compare your net worth, savings rate, emergency fund and more against peers your age, adjusted for where you live.</p>
+        </div>
+        <div class="step-c">
+          <div class="idx">3</div>
+          <h3>Act on the list</h3>
+          <p>Get a ranked set of concrete moves — highest-impact first — that you can actually start on this month.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SAMPLE / WHAT YOU GET -->
+  <section id="sample" class="sec">
+    <div class="container show-grid">
+      <div class="snap">
+        <div class="snap-head">
+          <h4>How you compare to peers</h4>
+          <span class="tag" style="color:var(--accent);background:rgba(221,85,28,.12)">Sample</span>
+        </div>
+        <div class="snap-bars" style="gap:16px">
+          <div class="snap-bar"><div class="top">Net income <b>128%</b></div><div class="snap-track"><i style="width:88%;background:var(--good)"></i><span class="avg" style="left:68%"></span></div></div>
+          <div class="snap-bar"><div class="top">Total net worth <b>134%</b></div><div class="snap-track"><i style="width:90%;background:var(--good)"></i><span class="avg" style="left:66%"></span></div></div>
+          <div class="snap-bar"><div class="top">Retirement savings <b>83%</b></div><div class="snap-track"><i style="width:60%;background:var(--good)"></i><span class="avg" style="left:72%"></span></div></div>
+          <div class="snap-bar"><div class="top">Liquid cash <b>61%</b></div><div class="snap-track"><i style="width:44%;background:var(--accent)"></i><span class="avg" style="left:72%"></span></div></div>
+          <div class="snap-bar"><div class="top">Savings rate <b>vs 7% avg</b></div><div class="snap-track"><i style="width:78%;background:var(--good)"></i><span class="avg" style="left:38%"></span></div></div>
+          <div class="snap-bar"><div class="top">Debt-to-income <b>runs high</b></div><div class="snap-track"><i style="width:70%;background:var(--accent)"></i><span class="avg" style="left:52%"></span></div></div>
+        </div>
+      </div>
+      <div>
+        <span class="eyebrow">What you get</span>
+        <h2 style="font-size:clamp(1.9rem,3.2vw,2.7rem);margin:14px 0 0">A real report, not a score out of ten.</h2>
+        <ul class="show-list">
+          <li><span class="k">◆</span><div><h4>Headline KPIs</h4><p>Net worth, monthly surplus, emergency-fund runway and retirement — each flagged good, watch or address.</p></div></li>
+          <li><span class="k">◆</span><div><h4>Peer benchmarks</h4><p>See exactly where you sit versus your age band, adjusted for your city's cost of living and household size.</p></div></li>
+          <li><span class="k">◆</span><div><h4>Strengths &amp; red flags</h4><p>A plain-language scorecard of what's working, what's borderline, and what needs attention now.</p></div></li>
+          <li><span class="k">◆</span><div><h4>A ranked action plan</h4><p>Specific moves — pay down that 24% card, move idle cash to a 4.5% HYSA — ordered by dollar impact.</p></div></li>
+        </ul>
+        <button class="btn btn-primary btn-pill" style="margin-top:26px" onclick="startFinancialCheck()">Generate my report →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- DARK BAND -->
+  <section class="sec band-dark">
+    <div class="container quote">
+      <span class="eyebrow">The honest part</span>
+      <p>Most people have never had their finances audited. <em>Fifteen minutes here</em> shows you what an advisor would charge to tell you — with none of it leaving your screen.</p>
+      <div class="by">Not financial advice. A starting point for the conversations that are.</div>
+    </div>
+  </section>
+
+  <!-- STATS -->
+  <section class="sec">
+    <div class="container">
+      <div class="stats-band">
+        <div class="stat-b"><div class="n">52</div><div class="l">US metros with cost-of-living adjustment</div></div>
+        <div class="stat-b"><div class="n">7</div><div class="l">Age bands benchmarked from federal data</div></div>
+        <div class="stat-b"><div class="n">30+</div><div class="l">Data points across income, assets &amp; debt</div></div>
+        <div class="stat-b"><div class="n">0</div><div class="l">Bytes ever uploaded to any server</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FINAL CTA -->
+  <section class="sec cta-band">
+    <div class="container">
+      <h2>Ready to see where you really stand?</h2>
+      <p>No sign-up, no sales call, no trace left behind. Just an honest look at your money and a plan you can start today.</p>
+      <div style="margin-top:30px;display:flex;gap:14px;justify-content:center;flex-wrap:wrap">
+        <button class="btn btn-secondary btn-pill btn-lg" onclick="startFinancialCheck()">Start your free check →</button>
+        <button class="btn btn-pill btn-lg" style="background:var(--accent-deep);color:#fff" onclick="startRedactor()">Redact a document</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- LEGAL DISCLAIMER -->
+  <section id="disclaimer" class="sec band-sand">
+    <div class="container disclaimer">
+      <span class="eyebrow">Important — please read</span>
+      <h2>Disclaimer &amp; limitation of liability</h2>
+      <div class="disclaimer-body">
+        <p><strong>Not financial advice.</strong> AkabiLife is an educational and informational tool only. It does not provide financial, investment, tax, legal, accounting, or other professional advice, and nothing on this site is a recommendation, endorsement, or solicitation to buy, sell, or hold any financial product or to adopt any financial strategy. No advisory, fiduciary, or professional relationship is created by your use of this site.</p>
+        <p><strong>Estimates only.</strong> All scores, benchmarks, comparisons, and suggestions are generated automatically from the figures you enter and from generalized, third-party reference data. They are approximations, may be inaccurate, outdated, or incomplete, and are not tailored to your individual circumstances. Cost-of-living and peer-benchmark figures are estimates and may not reflect current conditions. You are solely responsible for independently verifying any information before relying on it.</p>
+        <p><strong>Use at your own risk.</strong> Any decision or action you take based on this site or its outputs is taken entirely at your own risk and is your sole responsibility. Before making any financial decision, consult a qualified, licensed professional — such as a Certified Financial Planner, CPA, or attorney — who can consider your specific situation.</p>
+        <p><strong>No liability.</strong> To the fullest extent permitted by applicable law, the creators, owners, operators, developers, contributors, and affiliates of AkabiLife provide this site “as is” and “as available,” disclaim all warranties of any kind (express or implied, including merchantability, fitness for a particular purpose, accuracy, and non-infringement), and accept no liability whatsoever for any loss or damage of any kind — direct, indirect, incidental, special, punitive, or consequential — arising out of or in connection with your access to, use of, reliance on, or inability to use this site or its outputs, even if advised of the possibility of such damages.</p>
+        <p><strong>Your responsibilities.</strong> By using this site you acknowledge and agree that: you are solely responsible for your own financial decisions and for verifying all information; you will not hold the creators, affiliates, or contributors liable for any outcome; and you will not use this site for any fraudulent, unlawful, negligent, or misleading purpose. If you do not agree with these terms, do not use this site.</p>
+        <p><strong>Privacy.</strong> This tool runs entirely in your browser. It does not collect, transmit, or store the information you enter; refreshing or closing the page discards it.</p>
+        <p class="disclaimer-note">This disclaimer is provided for general informational purposes and does not constitute legal advice. Operators of this site should have it reviewed by a licensed attorney to ensure it fits their specific use and jurisdiction.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="foot">
+    <div class="container">
+      <div class="foot-top">
+        <div>
+          <button class="wordmark" onclick="restartTool()" aria-label="AkabiLife — home"><span class="glyph" aria-hidden="true">A</span> AkabiLife</button>
+          <p class="foot-blurb">A private financial health check and document redactor that runs entirely in your browser.</p>
+        </div>
+        <div>
+          <h5>Tools</h5>
+          <a onclick="startFinancialCheck()">Financial Health Check</a>
+          <a onclick="startRedactor()">Document Redactor</a>
+          <a onclick="loadDemo('demo_28f')">Demo · 28, single</a>
+          <a onclick="loadDemo('demo_45m')">Demo · 45, family</a>
+        </div>
+        <div>
+          <h5>Learn</h5>
+          <a onclick="backToSite(event,'how')">How it works</a>
+          <a onclick="backToSite(event,'sample')">What you get</a>
+          <a onclick="backToSite(event,'privacy')">Privacy</a>
+          <a onclick="backToSite(event,'disclaimer')">Disclaimer</a>
+        </div>
+      </div>
+      <div class="foot-liability">
+        AkabiLife is an educational tool and does not provide financial, investment, tax, or legal advice. All outputs are estimates. Any action taken based on this site is at the user's own risk and sole responsibility. To the fullest extent permitted by law, the creators, operators, and affiliates accept no liability for any loss arising from its use. <a onclick="backToSite(event,'disclaimer')" style="display:inline;text-decoration:underline;padding:0">Read the full disclaimer</a>.
+      </div>
+      <div class="foot-bottom">
+        <span>🔒 All calculations run in your browser. Nothing is uploaded or saved.</span>
+        <span>© <span id="foot-year">2026</span> AkabiLife · Not financial advice.</span>
+      </div>
+    </div>
+  </footer>
+</div>
+
+<!-- ============================ TOOL AREA ============================ -->
+<div class="wrap-tool">
+
+  <!-- INTAKE FORM -->
+  <div id="intake" style="display:none">
+    <button class="back-link" onclick="restartTool()">← Back to home</button>
+    <div class="tool-head">
+      <h1>Financial Health Check</h1>
+      <div class="sub">Five short sections · ~4 minutes · your data never leaves this page</div>
+    </div>
+
+    <div class="progress">
+      <div class="progress-bar" id="p1"><div class="fill"></div></div>
+      <div class="progress-bar" id="p2"><div class="fill"></div></div>
+      <div class="progress-bar" id="p3"><div class="fill"></div></div>
+      <div class="progress-bar" id="p4"><div class="fill"></div></div>
+      <div class="progress-bar" id="p5"><div class="fill"></div></div>
+    </div>
+
+    <div class="tabs" id="tabs">
+      <button class="tab active" data-step="1" onclick="goto(1)"><span class="num">1</span>Household</button>
+      <button class="tab" data-step="2" onclick="goto(2)"><span class="num">2</span>Income</button>
+      <button class="tab" data-step="3" onclick="goto(3)"><span class="num">3</span>Assets</button>
+      <button class="tab" data-step="4" onclick="goto(4)"><span class="num">4</span>Debts</button>
+      <button class="tab" data-step="5" onclick="goto(5)"><span class="num">5</span>Expenses</button>
+    </div>
+
+    <!-- STEP 1: HOUSEHOLD -->
+    <div class="panel step" id="step1" style="border-top-left-radius:0;border-top-right-radius:0">
+      <h2>About your household</h2>
+      <div class="desc">The basics we need to benchmark you against peers in similar life stages and locations.</div>
+      <div class="privacy-note"><strong>🔒 Private:</strong> We don't ask for your name, email, or address. Only the metro is used to adjust for cost of living.</div>
+      <div class="grid cols-2">
+        <div class="field">
+          <label>Your age <span class="req">*</span></label>
+          <input type="number" id="age" min="18" max="100" placeholder="e.g., 42">
+        </div>
+        <div class="field">
+          <label>Household type <span class="req">*</span></label>
+          <select id="household">
+            <option value="">Select...</option>
+            <option value="single">Single, no dependents</option>
+            <option value="single_kids">Single parent</option>
+            <option value="couple">Couple, no kids</option>
+            <option value="couple_kids">Couple with kids</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Number of dependent kids <span class="hint">(under 18 at home)</span></label>
+          <input type="number" id="kids" min="0" max="10" value="0">
+        </div>
+        <div class="field">
+          <label>Metro area <span class="req">*</span> <span class="hint">(your city or closest major city)</span></label>
+          <select id="metro">
+            <option value="">Select your metro...</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Employment status</label>
+          <select id="employment">
+            <option value="employed">Employed full-time</option>
+            <option value="self_employed">Self-employed</option>
+            <option value="part_time">Part-time</option>
+            <option value="transition">In transition / job searching</option>
+            <option value="retired">Retired</option>
+            <option value="student">Student</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Spouse/partner employed? <span class="hint">(if applicable)</span></label>
+          <select id="spouse_emp">
+            <option value="na">N/A</option>
+            <option value="employed">Yes, employed</option>
+            <option value="self_employed">Yes, self-employed</option>
+            <option value="not_employed">No, not currently</option>
+          </select>
+        </div>
+      </div>
+      <div class="actions">
+        <span></span>
+        <button class="btn btn-primary" onclick="next()">Continue: Income →</button>
+      </div>
+    </div>
+
+    <!-- STEP 2: INCOME -->
+    <div class="panel step" id="step2" style="display:none">
+      <h2>Monthly income</h2>
+      <div class="desc">Approximate <strong>after-tax (take-home)</strong> amounts. Average over the last 6–12 months if it varies.</div>
+      <div class="grid cols-2">
+        <div class="section-title">Employment income</div>
+        <div class="field money">
+          <label>Your net monthly pay <span class="hint">(after taxes, 401k, benefits)</span></label>
+          <input type="number" id="inc_self" min="0" placeholder="0">
+        </div>
+        <div class="field money">
+          <label>Spouse net monthly pay <span class="hint">(if applicable)</span></label>
+          <input type="number" id="inc_spouse" min="0" placeholder="0">
+        </div>
+        <div class="section-title">Other income</div>
+        <div class="field money">
+          <label>Rental income <span class="hint">(net of vacancy)</span></label>
+          <input type="number" id="inc_rental" min="0" placeholder="0">
+        </div>
+        <div class="field money">
+          <label>Side hustle / freelance</label>
+          <input type="number" id="inc_side" min="0" placeholder="0">
+        </div>
+        <div class="field money">
+          <label>Investment income <span class="hint">(dividends, interest)</span></label>
+          <input type="number" id="inc_investment" min="0" placeholder="0">
+        </div>
+        <div class="field money">
+          <label>Other <span class="hint">(pension, benefits, child support)</span></label>
+          <input type="number" id="inc_other" min="0" placeholder="0">
+        </div>
+      </div>
+      <div class="actions">
+        <button class="btn btn-secondary" onclick="prev()">← Back</button>
+        <button class="btn btn-primary" onclick="next()">Continue: Assets →</button>
+      </div>
+    </div>
+
+    <!-- STEP 3: ASSETS -->
+    <div class="panel step" id="step3" style="display:none">
+      <h2>Assets &amp; savings</h2>
+      <div class="desc">Round to the nearest thousand. Combine spouse balances if joint.</div>
+      <div class="grid cols-2">
+        <div class="section-title">Liquid cash</div>
+        <div class="field money">
+          <label>Checking account balance</label>
+          <input type="number" id="ast_checking" min="0" placeholder="0">
+        </div>
+        <div class="field money">
+          <label>Savings account balance</label>
+          <input type="number" id="ast_savings" min="0" placeholder="0">
+        </div>
+        <div class="field pct">
+          <label>Savings account APY <span class="hint">(rate you're earning)</span></label>
+          <input type="number" id="ast_savings_apy" min="0" max="20" step="0.01" placeholder="0.5">
+        </div>
+        <div class="field money">
+          <label>Emergency fund / HYSA <span class="hint">(if separate)</span></label>
+          <input type="number" id="ast_ef" min="0" placeholder="0">
+        </div>
+        <div class="section-title">Retirement</div>
+        <div class="field money">
+          <label>401(k) / 403(b) balance</label>
+          <input type="number" id="ast_401k" min="0" placeholder="0">
+        </div>
+        <div class="field money">
+          <label>Roth IRA balance</label>
+          <input type="number" id="ast_roth" min="0" placeholder="0">
+        </div>
+        <div class="field money">
+          <label>Traditional IRA balance</label>
+          <input type="number" id="ast_trad" min="0" placeholder="0">
+        </div>
+        <div class="field money">
+          <label>HSA balance <span class="hint">(if applicable)</span></label>
+          <input type="number" id="ast_hsa" min="0" placeholder="0">
+        </div>
+        <div class="section-title">Other investments &amp; property</div>
+        <div class="field money">
+          <label>Taxable brokerage <span class="hint">(non-retirement stocks/ETFs)</span></label>
+          <input type="number" id="ast_brokerage" min="0" placeholder="0">
+        </div>
+        <div class="field money">
+          <label>Home equity <span class="hint">(current value minus mortgage)</span></label>
+          <input type="number" id="ast_home" min="0" placeholder="0">
+        </div>
+        <div class="field money">
+          <label>Rental property equity</label>
+          <input type="number" id="ast_rental" min="0" placeholder="0">
+        </div>
+        <div class="field money">
+          <label>Vehicle equity <span class="hint">(current value minus loan)</span></label>
+          <input type="number" id="ast_vehicle" min="0" placeholder="0">
+        </div>
+      </div>
+      <div class="actions">
+        <button class="btn btn-secondary" onclick="prev()">← Back</button>
+        <button class="btn btn-primary" onclick="next()">Continue: Debts →</button>
+      </div>
+    </div>
+
+    <!-- STEP 4: DEBTS -->
+    <div class="panel step" id="step4" style="display:none">
+      <h2>Debts &amp; loans</h2>
+      <div class="desc">Include only balances you're currently carrying. Enter APR if you know it — helps identify highest-cost debt.</div>
+      <div class="grid cols-2">
+        <div class="section-title">Credit cards (revolving)</div>
+        <div class="field money">
+          <label>Total CC balance you carry <span class="hint">(if paid in full monthly, enter 0)</span></label>
+          <input type="number" id="debt_cc" min="0" placeholder="0">
+        </div>
+        <div class="field pct">
+          <label>Avg CC APR</label>
+          <input type="number" id="debt_cc_apr" min="0" max="40" step="0.01" placeholder="24">
+        </div>
+        <div class="section-title">Auto loans</div>
+        <div class="field money">
+          <label>Total auto loan balance</label>
+          <input type="number" id="debt_auto" min="0" placeholder="0">
+        </div>
+        <div class="field money">
+          <label>Monthly auto payment(s)</label>
+          <input type="number" id="debt_auto_mo" min="0" placeholder="0">
+        </div>
+        <div class="section-title">Student loans</div>
+        <div class="field money">
+          <label>Total student loan balance</label>
+          <input type="number" id="debt_student" min="0" placeholder="0">
+        </div>
+        <div class="field money">
+          <label>Monthly student loan payment</label>
+          <input type="number" id="debt_student_mo" min="0" placeholder="0">
+        </div>
+        <div class="section-title">Mortgage(s)</div>
+        <div class="field money">
+          <label>Primary mortgage balance</label>
+          <input type="number" id="debt_mort" min="0" placeholder="0">
+        </div>
+        <div class="field money">
+          <label>Rental mortgage balance <span class="hint">(if applicable)</span></label>
+          <input type="number" id="debt_mort_rental" min="0" placeholder="0">
+        </div>
+        <div class="section-title">Other</div>
+        <div class="field money">
+          <label>Personal loans / other debt</label>
+          <input type="number" id="debt_other" min="0" placeholder="0">
+        </div>
+        <div class="field money">
+          <label>Monthly total minimum payments <span class="hint">(all debts)</span></label>
+          <input type="number" id="debt_min_total" min="0" placeholder="0">
+        </div>
+      </div>
+      <div class="actions">
+        <button class="btn btn-secondary" onclick="prev()">← Back</button>
+        <button class="btn btn-primary" onclick="next()">Continue: Expenses →</button>
+      </div>
+    </div>
+
+    <!-- STEP 5: EXPENSES -->
+    <div class="panel step" id="step5" style="display:none">
+      <h2>Monthly expenses</h2>
+      <div class="desc">Estimate typical monthly spend in each category. Use averages if amounts vary month-to-month.</div>
+      <div class="grid cols-2">
+        <div class="section-title">Housing</div>
+        <div class="field money">
+          <label>Mortgage/Rent (primary residence)</label>
+          <input type="number" id="exp_housing" min="0" placeholder="0">
+        </div>
+        <div class="field money">
+          <label>Property tax + HOA + home insurance</label>
+          <input type="number" id="exp_property" min="0" placeholder="0">
+        </div>
+        <div class="section-title">Utilities</div>
+        <div class="field money">
+          <label>Electric / gas / water</label>
+          <input type="number" id="exp_utilities" min="0" placeholder="0">
+        </div>
+        <div class="field money">
+          <label>Internet / cable / streaming</label>
+          <input type="number" id="exp_internet" min="0" placeholder="0">
+        </div>
+        <div class="field money">
+          <label>Phone / cell service</label>
+          <input type="number" id="exp_phone" min="0" placeholder="0">
+        </div>
+        <div class="section-title">Food &amp; transportation</div>
+        <div class="field money">
+          <label>Groceries</label>
+          <input type="number" id="exp_grocery" min="0" placeholder="0">
+        </div>
+        <div class="field money">
+          <label>Dining out / takeout</label>
+          <input type="number" id="exp_dining" min="0" placeholder="0">
+        </div>
+        <div class="field money">
+          <label>Gas / EV charging / transit</label>
+          <input type="number" id="exp_transport" min="0" placeholder="0">
+        </div>
+        <div class="section-title">Insurance</div>
+        <div class="field money">
+          <label>Auto insurance</label>
+          <input type="number" id="exp_auto_ins" min="0" placeholder="0">
+        </div>
+        <div class="field money">
+          <label>Life insurance</label>
+          <input type="number" id="exp_life_ins" min="0" placeholder="0">
+        </div>
+        <div class="field money">
+          <label>Health insurance <span class="hint">(if not from paycheck)</span></label>
+          <input type="number" id="exp_health_ins" min="0" placeholder="0">
+        </div>
+        <div class="section-title">Other</div>
+        <div class="field money">
+          <label>Childcare / school</label>
+          <input type="number" id="exp_child" min="0" placeholder="0">
+        </div>
+        <div class="field money">
+          <label>Subscriptions / memberships <span class="hint">(gym, streaming, apps)</span></label>
+          <input type="number" id="exp_subs" min="0" placeholder="0">
+        </div>
+        <div class="field money">
+          <label>Entertainment / hobbies</label>
+          <input type="number" id="exp_ent" min="0" placeholder="0">
+        </div>
+        <div class="field money">
+          <label>Personal care / clothing</label>
+          <input type="number" id="exp_personal" min="0" placeholder="0">
+        </div>
+        <div class="field money">
+          <label>Healthcare (out of pocket)</label>
+          <input type="number" id="exp_health" min="0" placeholder="0">
+        </div>
+        <div class="field money">
+          <label>Travel / vacation <span class="hint">(monthly avg)</span></label>
+          <input type="number" id="exp_travel" min="0" placeholder="0">
+        </div>
+        <div class="field money">
+          <label>Charitable giving</label>
+          <input type="number" id="exp_giving" min="0" placeholder="0">
+        </div>
+        <div class="field money">
+          <label>Everything else</label>
+          <input type="number" id="exp_misc" min="0" placeholder="0">
+        </div>
+      </div>
+      <div class="actions">
+        <button class="btn btn-secondary" onclick="prev()">← Back</button>
+        <button class="btn btn-primary" onclick="generateReport()">Generate My Report →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- REPORT -->
+  <div id="report" class="report"></div>
+
+  <!-- REDACTOR -->
+  <div id="redactor" style="display:none">
+    <button class="back-link" onclick="restartTool()">← Back to home</button>
+    <div class="tool-head">
+      <h1>Document Redactor</h1>
+      <div class="sub">Strip PII from financial PDFs before you share them · runs entirely in your browser</div>
+    </div>
+
+    <div class="privacy-note">
+      <strong>🛡 True redaction:</strong> Each page is rasterized to an image with PII painted over pixel-by-pixel, then a new PDF is built from those images. The original text bytes are <strong>physically gone</strong> — nothing can be copy-pasted from under a redaction. Everything happens in this browser tab; no uploads. Refresh or close = everything discarded.
+    </div>
+
+    <div id="libError" style="display:none;background:rgba(178,58,46,.08);border:1px solid rgba(178,58,46,.4);border-radius:11px;padding:16px;font-size:.86rem;color:var(--ink);margin-bottom:16px;line-height:1.6">
+      <strong style="color:var(--bad)">⚠ PDF processing libraries didn't load.</strong>
+      <div style="margin-top:8px;color:var(--muted);font-size:.82rem">
+        This tool needs pdf.js and pdf-lib to work. Possible causes:
+        <ul style="margin:6px 0 10px 20px;padding:0">
+          <li>You're offline or your network blocked the CDN request</li>
+          <li>An ad blocker or browser extension is blocking cdnjs.cloudflare.com or cdn.jsdelivr.net</li>
+          <li>Some browsers block external scripts when the HTML is opened directly from disk (file://)</li>
+        </ul>
+        <strong>Try:</strong> refresh the page, disable ad blockers for this file, or open in a different browser.
+        <div style="margin-top:10px"><button class="btn btn-secondary" onclick="startRedactor()" style="font-size:.8rem;padding:7px 13px">🔄 Retry loading libraries</button></div>
+      </div>
+    </div>
+
+    <div class="panel" id="redDropPanel">
+      <h2>Upload financial documents</h2>
+      <div class="desc">PDFs only. Bank statements, W-2s, paystubs, 401(k) statements, tax returns, brokerage statements, etc.</div>
+      <label class="drop" id="dropZone">
+        <input type="file" id="fileInput" accept="application/pdf,.pdf" multiple>
+        <div class="drop-icon">📄</div>
+        <h3>Drop PDFs here or <span class="browse">click to browse</span></h3>
+        <p>Multiple files supported. Nothing leaves this browser tab.</p>
+      </label>
+    </div>
+
+    <div class="panel" id="redFilesPanel" style="display:none">
+      <h2>Uploaded documents</h2>
+      <div class="desc">Auto-scanning for SSN, phone, email, account numbers, credit cards, EIN. Review detections and add custom terms below.</div>
+      <div id="fileList"></div>
+
+      <div class="details" style="margin-top:16px">
+        <h2>Additional terms to redact <span style="color:var(--muted);font-weight:400;font-size:.9rem">(applies to every file)</span></h2>
+        <div class="desc" style="margin-bottom:12px">Add your name, spouse name, street address, city, employer name, or anything else you want scrubbed. Case-insensitive substring match.</div>
+        <div id="termList" class="custom-terms" style="margin:0 0 10px"></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <input type="text" id="termInput" class="term-input" placeholder='e.g., "Damian Brewer" or "7355 S Via Plaza"' onkeypress="if(event.key==='Enter'){addTerm();return false;}">
+          <button class="btn btn-secondary" onclick="addTerm()">+ Add term</button>
+        </div>
+      </div>
+
+      <div class="stats">
+        <div class="stat"><div class="n" id="s-files">0</div><div class="l">Files</div></div>
+        <div class="stat"><div class="n" id="s-pages">0</div><div class="l">Pages</div></div>
+        <div class="stat"><div class="n" id="s-det">0</div><div class="l">Detections</div></div>
+        <div class="stat"><div class="n" id="s-conf">0</div><div class="l">Confirmed</div></div>
+      </div>
+
+      <div class="actions">
+        <button class="btn btn-secondary" onclick="resetRedactor()">Clear All Files</button>
+        <button class="btn btn-good" id="generateBtn" onclick="generateAll()" disabled>Generate Redacted PDFs</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ================ NAV / VIEW HELPERS ================
+function toggleMenu(){
+  var m=document.getElementById('mobileMenu'), t=document.getElementById('navToggle');
+  if(!m) return;
+  if(m.hasAttribute('hidden')){ m.removeAttribute('hidden'); if(t) t.setAttribute('aria-expanded','true'); }
+  else { m.setAttribute('hidden',''); if(t) t.setAttribute('aria-expanded','false'); }
+}
+function closeMenu(){
+  var m=document.getElementById('mobileMenu'), t=document.getElementById('navToggle');
+  if(m) m.setAttribute('hidden','');
+  if(t) t.setAttribute('aria-expanded','false');
+}
+function menuNav(id){ closeMenu(); backToSite(null, id); }
+// Move keyboard focus to the newly shown view for screen-reader / keyboard users
+function focusView(sel){
+  var el=document.querySelector(sel);
+  if(el){ el.setAttribute('tabindex','-1'); try{ el.focus({preventScroll:true}); }catch(e){ el.focus(); } }
+}
+function siteVisible(){ return document.getElementById('landing').style.display !== 'none'; }
+function backToSite(e, id){
+  if(e) e.preventDefault();
+  document.getElementById('report').style.display='none';
+  document.getElementById('intake').style.display='none';
+  var red=document.getElementById('redactor'); if(red) red.style.display='none';
+  document.getElementById('landing').style.display='block';
+  var el=document.getElementById(id);
+  if(el) setTimeout(function(){ el.scrollIntoView({behavior:'smooth'}); }, 30);
+  return false;
+}
+
+// ================ DATA: METROS + BENCHMARKS ================
+const METROS = [
+  {name:"US Average", col:100},
+  {name:"Albuquerque, NM", col:94},
+  {name:"Anchorage, AK", col:128},
+  {name:"Atlanta, GA", col:106},
+  {name:"Austin, TX", col:118},
+  {name:"Baltimore, MD", col:115},
+  {name:"Birmingham, AL", col:89},
+  {name:"Boise, ID", col:103},
+  {name:"Boston, MA", col:145},
+  {name:"Buffalo, NY", col:95},
+  {name:"Charlotte, NC", col:98},
+  {name:"Chicago, IL", col:108},
+  {name:"Cincinnati, OH", col:90},
+  {name:"Cleveland, OH", col:89},
+  {name:"Columbus, OH", col:92},
+  {name:"Dallas, TX", col:103},
+  {name:"Denver, CO", col:118},
+  {name:"Detroit, MI", col:88},
+  {name:"Honolulu, HI", col:166},
+  {name:"Houston, TX", col:96},
+  {name:"Indianapolis, IN", col:90},
+  {name:"Jacksonville, FL", col:96},
+  {name:"Kansas City, MO", col:92},
+  {name:"Las Vegas, NV", col:105},
+  {name:"Los Angeles, CA", col:152},
+  {name:"Louisville, KY", col:90},
+  {name:"Memphis, TN", col:87},
+  {name:"Miami, FL", col:123},
+  {name:"Milwaukee, WI", col:95},
+  {name:"Minneapolis, MN", col:105},
+  {name:"Nashville, TN", col:105},
+  {name:"New Orleans, LA", col:96},
+  {name:"New York, NY", col:168},
+  {name:"Oklahoma City, OK", col:87},
+  {name:"Orlando, FL", col:102},
+  {name:"Philadelphia, PA", col:105},
+  {name:"Phoenix, AZ", col:105},
+  {name:"Pittsburgh, PA", col:92},
+  {name:"Portland, OR", col:122},
+  {name:"Raleigh, NC", col:102},
+  {name:"Reno, NV", col:108},
+  {name:"Richmond, VA", col:100},
+  {name:"Sacramento, CA", col:121},
+  {name:"Salt Lake City, UT", col:108},
+  {name:"San Antonio, TX", col:95},
+  {name:"San Diego, CA", col:148},
+  {name:"San Francisco, CA", col:172},
+  {name:"San Jose, CA", col:165},
+  {name:"Seattle, WA", col:142},
+  {name:"St. Louis, MO", col:87},
+  {name:"Tampa, FL", col:101},
+  {name:"Tucson, AZ", col:96},
+  {name:"Washington, DC", col:145}
+];
+
+// Benchmarks by age band (2022-2024 US data)
+// Source composite: Fed SCF 2022, Fidelity 2024, Census ACS 2024
+const BENCHMARKS = {
+  "18-24": {income_gross: 42000, income_net_mo: 2800, net_worth: 12000, retirement: 5000, liquid_cash: 3200, savings_rate: 3},
+  "25-34": {income_gross: 71000, income_net_mo: 4600, net_worth: 39000, retirement: 17000, liquid_cash: 5400, savings_rate: 5},
+  "35-44": {income_gross: 85000, income_net_mo: 5500, net_worth: 135000, retirement: 59000, liquid_cash: 7500, savings_rate: 6},
+  "45-54": {income_gross: 104000, income_net_mo: 6420, net_worth: 247000, retirement: 142000, liquid_cash: 8700, savings_rate: 7},
+  "55-64": {income_gross: 90000, income_net_mo: 5800, net_worth: 364000, retirement: 185000, liquid_cash: 10200, savings_rate: 8},
+  "65-74": {income_gross: 73000, income_net_mo: 4800, net_worth: 410000, retirement: 199000, liquid_cash: 12000, savings_rate: 5},
+  "75+":   {income_gross: 55000, income_net_mo: 3900, net_worth: 335000, retirement: 130000, liquid_cash: 14000, savings_rate: 3}
+};
+
+// Household size multipliers (for expenses/income needs)
+const HH_MULT = {
+  "single": 1.0,
+  "single_kids": 1.4,
+  "couple": 1.5,
+  "couple_kids": 1.9
+};
+
+// ================ INFO TOOLTIPS ================
+// Small "i" icon + popover explaining what a field or metric means.
+// Used both on the intake wizard (per-field) and the report (KPIs + compare rows).
+function infoIcon(text) {
+  const safe = String(text).replace(/"/g, '&quot;');
+  return ` <span class="info-wrap"><button type="button" class="info-icon" aria-label="What does this mean?" onclick="toggleInfo(event,this)">i</button><span class="info-tooltip" role="tooltip">${safe}</span></span>`;
+}
+function toggleInfo(e, btn) {
+  e.stopPropagation();
+  e.preventDefault();
+  const wrap = btn.parentElement;
+  const wasOpen = wrap.classList.contains('open');
+  document.querySelectorAll('.info-wrap.open').forEach(w => w.classList.remove('open'));
+  if (!wasOpen) wrap.classList.add('open');
+}
+document.addEventListener('click', () => {
+  document.querySelectorAll('.info-wrap.open').forEach(w => w.classList.remove('open'));
+});
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') document.querySelectorAll('.info-wrap.open').forEach(w => w.classList.remove('open'));
+});
+
+// Explanations for every intake-form field, keyed by input id.
+const FIELD_INFO = {
+  age: "Your current age. Used to place you in an age band (e.g. 45-54) so benchmarks compare you to similar peers.",
+  household: "Your household structure — affects which income and expense benchmarks are used for comparison.",
+  kids: "Number of dependent children under 18 living with you. Larger households get adjusted expense benchmarks.",
+  metro: "Your metro area, or the closest major city. Benchmarks are adjusted for local cost of living using this.",
+  employment: "Your current employment status. Context only — doesn't change the math.",
+  spouse_emp: "Whether your spouse or partner currently earns income. Leave as N/A if you don't have one.",
+  inc_self: "Your paycheck after taxes, 401(k) contributions, and benefit deductions — the amount that actually lands in your bank account each month.",
+  inc_spouse: "Your spouse or partner's monthly take-home pay, after taxes and deductions.",
+  inc_rental: "Monthly rental income you collect, after subtracting an estimate for vacancy and expenses.",
+  inc_side: "Monthly income from freelance work, gig work, or a side business.",
+  inc_investment: "Monthly dividends or interest income you regularly receive — not one-time capital gains.",
+  inc_other: "Any other regular monthly income: pension, alimony, child support, disability, etc.",
+  ast_checking: "Current balance across all checking accounts.",
+  ast_savings: "Current balance across regular savings accounts, not counting a separate emergency fund.",
+  ast_savings_apy: "The annual percentage yield (interest rate) your savings account currently earns. Check your bank's app or statement.",
+  ast_ef: "Balance held specifically as an emergency fund, if you keep it separate from regular savings (e.g. a dedicated high-yield savings account).",
+  ast_401k: "Combined balance across all 401(k) or 403(b) retirement accounts.",
+  ast_roth: "Combined balance across all Roth IRA accounts.",
+  ast_trad: "Combined balance across all Traditional IRA accounts.",
+  ast_hsa: "Balance in a Health Savings Account, if you have one.",
+  ast_brokerage: "Value of stocks, ETFs, or funds held in a taxable (non-retirement) brokerage account.",
+  ast_home: "Your home's current estimated market value minus what you still owe on the mortgage.",
+  ast_rental: "Current value minus remaining mortgage balance on any rental or investment property you own.",
+  ast_vehicle: "Current market value of your vehicle(s) minus any remaining auto loan balance.",
+  debt_cc: "Total credit card balance you carry from month to month. If you pay your card(s) in full every month, enter 0.",
+  debt_cc_apr: "The average interest rate (APR) across your credit cards. Check a recent statement if unsure — most cards run 20-30%.",
+  debt_auto: "Combined remaining balance across all auto loans.",
+  debt_auto_mo: "Total monthly payment across all auto loans.",
+  debt_student: "Combined remaining balance across all student loans.",
+  debt_student_mo: "Total monthly payment across all student loans.",
+  debt_mort: "Remaining balance on the mortgage for your primary residence.",
+  debt_mort_rental: "Remaining balance on the mortgage for a rental or investment property, if applicable.",
+  debt_other: "Balance on any other debt: personal loans, medical debt, loans from family, buy-now-pay-later, etc.",
+  debt_min_total: "The sum of minimum required monthly payments across every debt you carry (cards, auto, student, mortgage, other). Used to calculate your debt-to-income ratio.",
+  exp_housing: "Your monthly rent, or mortgage principal + interest, for your primary residence.",
+  exp_property: "Monthly cost of property tax, HOA dues, and homeowner's/renter's insurance combined.",
+  exp_utilities: "Monthly electric, gas, and water/sewer bills combined.",
+  exp_internet: "Monthly internet, cable, and streaming service costs combined.",
+  exp_phone: "Monthly cell phone bill(s) for your household.",
+  exp_grocery: "Monthly spending on groceries and household supplies.",
+  exp_dining: "Monthly spending on restaurants, takeout, and food delivery.",
+  exp_transport: "Monthly gas, EV charging, rideshare, or public transit costs.",
+  exp_auto_ins: "Monthly auto insurance premium.",
+  exp_life_ins: "Monthly life insurance premium.",
+  exp_health_ins: "Monthly health insurance premium — only if paid out of pocket, not already deducted from your paycheck.",
+  exp_child: "Monthly childcare, daycare, or school-related costs.",
+  exp_subs: "Monthly total for subscriptions and memberships: gym, streaming, apps, etc.",
+  exp_ent: "Monthly spending on entertainment and hobbies.",
+  exp_personal: "Monthly spending on personal care and clothing.",
+  exp_health: "Monthly out-of-pocket healthcare costs not covered by insurance (copays, prescriptions, etc.).",
+  exp_travel: "Average monthly travel/vacation spending. Take your annual travel budget and divide by 12.",
+  exp_giving: "Monthly charitable donations or tithing.",
+  exp_misc: "Anything not captured above — a catch-all for miscellaneous monthly spending."
+};
+
+function initFieldInfo() {
+  Object.keys(FIELD_INFO).forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const field = el.closest('.field');
+    const label = field && field.querySelector('label');
+    if (!label || label.querySelector('.info-wrap')) return;
+    label.insertAdjacentHTML('beforeend', infoIcon(FIELD_INFO[id]));
+  });
+}
+
+// Populate metro dropdown
+window.addEventListener('DOMContentLoaded', () => {
+  const sel = document.getElementById('metro');
+  METROS.forEach(m => {
+    const opt = document.createElement('option');
+    opt.value = m.name;
+    opt.textContent = m.name + (m.col !== 100 ? ` (${m.col>100?'+':''}${(m.col-100)}% vs US avg)` : '');
+    sel.appendChild(opt);
+  });
+  initFieldInfo();
+});
+
+// ================ DEMO PROFILES ================
+// Realistic composite averages based on Fed SCF 2022, BLS 2024,
+// Census ACS 2024, LendingTree 2024, Zillow rent 2024.
+const DEMOS = {
+  demo_28f: {
+    _label: "Average 28-year-old · Single, no kids · Austin, TX",
+    age: 28, household: "single", kids: 0,
+    metro: "Austin, TX", employment: "employed", spouse_emp: "na",
+    inc_self: 4200, inc_spouse: 0, inc_rental: 0, inc_side: 150,
+    inc_investment: 15, inc_other: 0,
+    ast_checking: 2800, ast_savings: 4200, ast_savings_apy: 0.5,
+    ast_ef: 0, ast_401k: 15000, ast_roth: 8500, ast_trad: 0,
+    ast_hsa: 0, ast_brokerage: 2500, ast_home: 0, ast_rental: 0,
+    ast_vehicle: 4500,
+    debt_cc: 3500, debt_cc_apr: 24, debt_auto: 12000, debt_auto_mo: 320,
+    debt_student: 28000, debt_student_mo: 310, debt_mort: 0,
+    debt_mort_rental: 0, debt_other: 0, debt_min_total: 730,
+    exp_housing: 1650, exp_property: 0, exp_utilities: 110,
+    exp_internet: 60, exp_phone: 85, exp_grocery: 340,
+    exp_dining: 290, exp_transport: 145, exp_auto_ins: 135,
+    exp_life_ins: 0, exp_health_ins: 0, exp_child: 0,
+    exp_subs: 68, exp_ent: 170, exp_personal: 155,
+    exp_health: 55, exp_travel: 180, exp_giving: 25, exp_misc: 140
+  },
+  demo_45m: {
+    _label: "Average 45-year-old · Married with 2 kids · Charlotte, NC",
+    age: 45, household: "couple_kids", kids: 2,
+    metro: "Charlotte, NC", employment: "employed", spouse_emp: "employed",
+    inc_self: 6500, inc_spouse: 3800, inc_rental: 0, inc_side: 0,
+    inc_investment: 65, inc_other: 0,
+    ast_checking: 8500, ast_savings: 18000, ast_savings_apy: 0.4,
+    ast_ef: 0, ast_401k: 145000, ast_roth: 22000, ast_trad: 15000,
+    ast_hsa: 4500, ast_brokerage: 18000, ast_home: 180000,
+    ast_rental: 0, ast_vehicle: 12000,
+    debt_cc: 6500, debt_cc_apr: 22, debt_auto: 18000, debt_auto_mo: 480,
+    debt_student: 8000, debt_student_mo: 150, debt_mort: 220000,
+    debt_mort_rental: 0, debt_other: 0, debt_min_total: 780,
+    exp_housing: 1650, exp_property: 450, exp_utilities: 245,
+    exp_internet: 130, exp_phone: 180, exp_grocery: 850,
+    exp_dining: 400, exp_transport: 350, exp_auto_ins: 180,
+    exp_life_ins: 55, exp_health_ins: 220, exp_child: 400,
+    exp_subs: 95, exp_ent: 240, exp_personal: 200,
+    exp_health: 140, exp_travel: 400, exp_giving: 150, exp_misc: 280
+  }
+};
+
+function loadDemo(key) {
+  const d = DEMOS[key];
+  if (!d) return;
+  startIntake();
+  Object.keys(d).forEach(k => {
+    if (k.startsWith('_')) return;
+    const el = document.getElementById(k);
+    if (el) el.value = d[k];
+  });
+  setTimeout(() => {
+    generateReport();
+    setTimeout(() => {
+      const rep = document.getElementById('report');
+      const banner = document.createElement('div');
+      banner.style.cssText = 'background:var(--panel2);border:1px solid var(--accent);border-radius:12px;padding:14px 18px;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap';
+      banner.innerHTML = `<div><strong style="color:var(--accent)">📋 Demo report</strong> &middot; <span style="color:var(--ink)">${d._label}</span></div>
+        <button class="btn btn-ghost" onclick="restartTool()" style="font-size:.8rem;padding:7px 13px">← Back to start</button>`;
+      rep.insertBefore(banner, rep.firstChild);
+    }, 50);
+  }, 100);
+}
+
+function restartTool() {
+  closeMenu();
+  document.getElementById('report').style.display = 'none';
+  document.getElementById('intake').style.display = 'none';
+  const red = document.getElementById('redactor');
+  if (red) red.style.display = 'none';
+  document.getElementById('landing').style.display = 'block';
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
+
+function startFinancialCheck() { startIntake(); }
+
+async function startRedactor() {
+  closeMenu();
+  document.getElementById('landing').style.display = 'none';
+  document.getElementById('report').style.display = 'none';
+  document.getElementById('intake').style.display = 'none';
+  document.getElementById('redactor').style.display = 'block';
+  focusView('#redactor .tool-head h1');
+  window.scrollTo({top: 0, behavior: 'smooth'});
+  const ok = await ensurePdfLibsLoaded();
+  if (!ok) {
+    showLibError();
+  } else {
+    hideLibError();
+    initRedactor();
+  }
+}
+
+let currentStep = 1;
+
+function startIntake() {
+  document.getElementById('landing').style.display = 'none';
+  const red = document.getElementById('redactor');
+  if (red) red.style.display = 'none';
+  document.getElementById('report').style.display = 'none';
+  document.getElementById('intake').style.display = 'block';
+  goto(1);
+  focusView('#intake .tool-head h1');
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
+
+function goto(step) {
+  document.querySelectorAll('.step').forEach(s => s.style.display = 'none');
+  document.getElementById('step' + step).style.display = 'block';
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelector(`.tab[data-step="${step}"]`).classList.add('active');
+  currentStep = step;
+  updateProgress();
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
+function next() {
+  if (currentStep < 5) goto(currentStep + 1);
+}
+function prev() {
+  if (currentStep > 1) goto(currentStep - 1);
+}
+function updateProgress() {
+  for (let i = 1; i <= 5; i++) {
+    const el = document.getElementById('p' + i);
+    el.classList.remove('active', 'done');
+    if (i < currentStep) el.classList.add('done');
+    else if (i === currentStep) el.classList.add('active');
+  }
+}
+
+function num(id) {
+  const v = parseFloat(document.getElementById(id).value);
+  return isNaN(v) ? 0 : v;
+}
+function txt(id) {
+  return document.getElementById(id).value || '';
+}
+function ageBand(age) {
+  if (age < 25) return "18-24";
+  if (age < 35) return "25-34";
+  if (age < 45) return "35-44";
+  if (age < 55) return "45-54";
+  if (age < 65) return "55-64";
+  if (age < 75) return "65-74";
+  return "75+";
+}
+function fmt(n, opts={}) {
+  if (n === null || n === undefined || isNaN(n)) return '—';
+  const abs = Math.abs(n);
+  if (opts.dollar) {
+    if (abs >= 1000000) return '$' + (n/1000000).toFixed(1) + 'M';
+    if (abs >= 1000) return '$' + Math.round(n/1000) + 'K';
+    return '$' + Math.round(n);
+  }
+  if (opts.pct) return n.toFixed(1) + '%';
+  return n.toLocaleString();
+}
+
+function generateReport() {
+  const age = num('age');
+  const hh = txt('household') || 'single';
+  const kids = num('kids');
+  const metro = txt('metro') || 'US Average';
+  const colIdx = (METROS.find(m => m.name === metro) || METROS[0]).col;
+  const colMult = colIdx / 100;
+
+  if (!age) { alert('Please enter your age'); goto(1); return; }
+  if (!txt('household')) { alert('Please pick a household type'); goto(1); return; }
+  if (!txt('metro')) { alert('Please pick a metro area'); goto(1); return; }
+
+  const ab = ageBand(age);
+  const bench = BENCHMARKS[ab];
+  const hhMult = HH_MULT[hh] || 1.0;
+
+  const incomeNet = num('inc_self') + num('inc_spouse') + num('inc_rental') +
+                    num('inc_side') + num('inc_investment') + num('inc_other');
+
+  const liquidCash = num('ast_checking') + num('ast_savings') + num('ast_ef');
+  const retirement = num('ast_401k') + num('ast_roth') + num('ast_trad') + num('ast_hsa');
+  const investments = num('ast_brokerage');
+  const propertyEquity = num('ast_home') + num('ast_rental');
+  const vehicleEquity = num('ast_vehicle');
+  const totalAssets = liquidCash + retirement + investments + propertyEquity + vehicleEquity;
+
+  const ccDebt = num('debt_cc');
+  const totalMortgage = num('debt_mort') + num('debt_mort_rental');
+  const otherDebt = num('debt_auto') + num('debt_student') + num('debt_other');
+  const totalDebt = ccDebt + totalMortgage + otherDebt;
+
+  const netWorth = totalAssets - totalDebt;
+
+  const expenses = num('exp_housing') + num('exp_property') + num('exp_utilities') +
+                   num('exp_internet') + num('exp_phone') + num('exp_grocery') +
+                   num('exp_dining') + num('exp_transport') + num('exp_auto_ins') +
+                   num('exp_life_ins') + num('exp_health_ins') + num('exp_child') +
+                   num('exp_subs') + num('exp_ent') + num('exp_personal') +
+                   num('exp_health') + num('exp_travel') + num('exp_giving') +
+                   num('exp_misc');
+
+  const surplus = incomeNet - expenses;
+  const savingsRate = incomeNet > 0 ? (surplus / incomeNet * 100) : 0;
+  const emergencyMonths = expenses > 0 ? (liquidCash / expenses) : 0;
+  const totalMonthlyDebt = num('debt_min_total');
+  const dti = incomeNet > 0 ? (totalMonthlyDebt / incomeNet * 100) : 0;
+  const housingPct = incomeNet > 0 ? (num('exp_housing') + num('exp_property')) / incomeNet * 100 : 0;
+
+  const adjustedBench = {
+    income_net_mo: Math.round(bench.income_net_mo * colMult * hhMult),
+    net_worth: Math.round(bench.net_worth),
+    retirement: Math.round(bench.retirement),
+    liquid_cash: Math.round(bench.liquid_cash * colMult),
+    savings_rate: bench.savings_rate,
+    expected_expenses: Math.round(bench.income_net_mo * colMult * hhMult * 0.85)
+  };
+
+  const suggestions = [];
+  if (ccDebt > 0) {
+    const apr = num('debt_cc_apr') || 24;
+    const annualInterest = ccDebt * (apr / 100);
+    suggestions.push({
+      priority: 'urgent',
+      title: 'Pay down credit card debt first',
+      body: `Your $${fmt(ccDebt)} balance at ~${apr}% APR costs about $${fmt(Math.round(annualInterest))}/year in interest. That's your highest-return "investment" — every $1,000 paid off saves $${Math.round(apr*10)}/year guaranteed.`
+    });
+  }
+  const savingsAPY = num('ast_savings_apy');
+  const savingsBal = num('ast_savings');
+  if (savingsBal > 5000 && savingsAPY < 3.5) {
+    const lost = savingsBal * (0.045 - savingsAPY/100);
+    suggestions.push({
+      priority: 'high',
+      title: 'Move savings to a High-Yield Savings Account',
+      body: `Your savings is earning ${savingsAPY || 0}% APY. Top HYSAs (Ally, Marcus, Wealthfront) pay ~4.5%. You're leaving ~$${fmt(Math.round(lost))}/year on the table. Zero risk, zero effort switch.`
+    });
+  }
+  if (emergencyMonths < 3 && expenses > 0) {
+    const target = Math.round(expenses * 3 - liquidCash);
+    suggestions.push({
+      priority: 'urgent',
+      title: 'Build a 3-month emergency fund',
+      body: `You have ${emergencyMonths.toFixed(1)} months of expenses in cash. Aim for 3-6 months. Need to save ~$${fmt(target)} more to hit 3 months at your current burn rate.`
+    });
+  }
+  if (retirement < bench.retirement * 0.7 && age >= 25 && age < 65) {
+    const target = bench.retirement;
+    suggestions.push({
+      priority: 'high',
+      title: 'Increase retirement contributions',
+      body: `Your retirement balance is below the ${ab} median of $${fmt(target)}. If you're not maxing employer 401(k) match, that's free money. Also consider Roth IRA if under income limits.`
+    });
+  }
+  if (housingPct > 33) {
+    suggestions.push({
+      priority: 'high',
+      title: `Housing costs are high (${housingPct.toFixed(0)}% of take-home)`,
+      body: `Rule of thumb is <30%. In ${metro}, this may reflect market reality, but see if refinancing, moving, or getting a roommate makes sense.`
+    });
+  }
+  if (num('exp_phone') > 100) {
+    suggestions.push({
+      priority: 'med',
+      title: 'Audit phone/cell plan',
+      body: `You spend $${num('exp_phone')}/mo on phone. MVNOs like Mint, Visible, Cricket offer $30-50/mo plans on the same networks. Potential savings: $${Math.round((num('exp_phone')-40))} /mo.`
+    });
+  }
+  if (num('exp_subs') > 60) {
+    suggestions.push({
+      priority: 'med',
+      title: 'Subscription audit',
+      body: `$${num('exp_subs')}/mo in subs adds up to $${num('exp_subs')*12}/year. Do a quarterly review — cancel what you didn't use in the last 30 days.`
+    });
+  }
+  if (savingsRate < 10 && incomeNet > 0) {
+    suggestions.push({
+      priority: 'high',
+      title: `Savings rate is ${savingsRate.toFixed(1)}% — target 15-20%`,
+      body: `You're saving $${fmt(surplus)}/mo of your $${fmt(incomeNet)}/mo take-home. Automate transfers on payday so you save first, spend what's left.`
+    });
+  } else if (savingsRate > 20) {
+    suggestions.push({
+      priority: 'med',
+      title: `Excellent savings rate: ${savingsRate.toFixed(1)}%`,
+      body: `You're saving well above average. Make sure the money is being invested (not sitting in cash) and that you're using tax-advantaged accounts (401k, Roth IRA, HSA) before taxable brokerage.`
+    });
+  }
+  if (num('exp_life_ins') > 200 && (age < 55 || retirement > 500000)) {
+    suggestions.push({
+      priority: 'med',
+      title: 'Review whole/permanent life insurance',
+      body: `$${num('exp_life_ins')}/mo on life insurance is high. If this is whole life, a term policy typically costs 5-10× less. Review with an independent fee-only advisor before changing anything.`
+    });
+  }
+  if (dti > 36) {
+    suggestions.push({
+      priority: 'urgent',
+      title: `Debt-to-income is ${dti.toFixed(0)}% — high`,
+      body: `Aim for under 36%. Focus on paying down debt or increasing income before taking on new debt. Consider debt avalanche (highest APR first) or debt snowball (smallest balance first).`
+    });
+  }
+
+  if (suggestions.length === 0) {
+    suggestions.push({
+      priority: 'med',
+      title: 'You\'re in solid shape — optimize for the long term',
+      body: 'Your basics look healthy. Focus on maximizing tax-advantaged accounts, keeping investment fees low (index funds under 0.1% expense ratio), and estate planning as you accumulate wealth.'
+    });
+  }
+
+  const priOrder = {urgent: 0, high: 1, med: 2};
+  suggestions.sort((a,b) => priOrder[a.priority] - priOrder[b.priority]);
+
+  const overIncome = incomeNet - adjustedBench.income_net_mo;
+  const overNetWorth = netWorth - adjustedBench.net_worth;
+  const overRetirement = retirement - adjustedBench.retirement;
+  const overLiquid = liquidCash - adjustedBench.liquid_cash;
+
+  function bar(label, you, avg, dir, unit='$', infoText='') {
+    const max = Math.max(you, avg) * 1.15 || 1;
+    const youPct = (you/max)*100;
+    const avgPct = (avg/max)*100;
+    const isGood = dir === 'higher_is_good' ? you >= avg : you <= avg;
+    const tag = isGood ? 'tag-good' : 'tag-bad';
+    const barClass = isGood ? '' : 'bad';
+    const ratio = avg > 0 ? Math.round(you/avg*100) : 0;
+    const fy = unit === '$' ? '$' + fmt(you) : you.toFixed(1) + unit;
+    const fa = unit === '$' ? '$' + fmt(avg) : avg.toFixed(1) + unit;
+    const infoHtml = infoText ? infoIcon(infoText) : '';
+    return `<div class="compare-row">
+      <div class="compare-label">${label}${infoHtml}</div>
+      <div class="bar-wrap">
+        <div class="bar-avg" style="width:${avgPct}%"></div>
+        <div class="bar-you ${barClass}" style="width:${youPct}%"></div>
+        <div class="bar-labels">You: ${fy} · <span style="color:var(--muted)">Avg: ${fa}</span></div>
+      </div>
+      <div class="compare-tag ${tag}">${ratio}%</div>
+    </div>`;
+  }
+
+  const scorecard = buildScorecard({
+    savingsRate, emergencyMonths, ccDebt, dti, housingPct,
+    netWorth, adjustedBench, retirement, savingsAPY, savingsBal,
+    incomeNet, expenses, ab, colIdx
+  });
+
+  const hhLabel = {
+    "single": "Single, no dependents",
+    "single_kids": `Single parent, ${kids} kid${kids===1?'':'s'}`,
+    "couple": "Couple, no kids",
+    "couple_kids": `Couple + ${kids} kid${kids===1?'':'s'}`
+  }[hh];
+
+  const html = `
+  <button class="back-link" onclick="restartTool()">← Back to home</button>
+  <div class="panel round" style="margin-bottom:16px">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap">
+      <div>
+        <h2 style="margin:0;font-size:1.7rem">Your Financial Snapshot</h2>
+        <div style="color:var(--muted);font-size:.92rem;margin-top:6px">
+          Age ${age} · ${hhLabel} · ${metro} <span style="color:var(--accent)">(${colIdx>100?'+':''}${colIdx-100}% COL)</span>
+        </div>
+      </div>
+      <div style="text-align:right">
+        <button class="btn btn-ghost" onclick="window.print()">🖨 Print / Save PDF</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="kpis">
+    <div class="kpi ${netWorth >= adjustedBench.net_worth ? 'good' : 'warn'}">
+      <div class="label">Net Worth${infoIcon('Total assets (cash, investments, retirement, home/vehicle equity) minus total debts. The single clearest measure of financial position.')}</div>
+      <div class="value">$${fmt(netWorth)}</div>
+      <div class="delta">${overNetWorth >= 0 ? '▲' : '▼'} ${fmt(Math.abs(overNetWorth), {dollar:true})} vs peer median</div>
+    </div>
+    <div class="kpi ${surplus >= 0 ? 'good' : 'bad'}">
+      <div class="label">Monthly Surplus${infoIcon('Your monthly take-home income minus your total monthly expenses. Positive means you\'re saving; negative means you\'re spending more than you earn.')}</div>
+      <div class="value">${surplus >= 0 ? '$' : '-$'}${fmt(Math.abs(surplus))}</div>
+      <div class="delta">Savings rate: ${savingsRate.toFixed(1)}%</div>
+    </div>
+    <div class="kpi ${emergencyMonths >= 3 ? 'good' : 'bad'}">
+      <div class="label">Emergency Fund${infoIcon('Liquid cash (checking + savings + dedicated emergency fund) divided by monthly expenses — how many months you could cover with no income.')}</div>
+      <div class="value">${emergencyMonths.toFixed(1)} mo</div>
+      <div class="delta">Target: 3-6 months of expenses</div>
+    </div>
+    <div class="kpi ${retirement >= adjustedBench.retirement ? 'good' : 'warn'}">
+      <div class="label">Retirement Savings${infoIcon('Combined balance across 401(k)/403(b), Roth IRA, Traditional IRA, and HSA accounts.')}</div>
+      <div class="value">$${fmt(retirement)}</div>
+      <div class="delta">Peer median: $${fmt(adjustedBench.retirement)}</div>
+    </div>
+  </div>
+
+  <div class="panel round">
+    <h2>How you compare to peers</h2>
+    <div class="desc" style="margin-bottom:14px">Compared to Americans aged ${ab}, adjusted for cost of living in ${metro}${hh !== 'single' ? ' and household size' : ''}. Dashed line = peer median.</div>
+    ${bar('Monthly Net Income', incomeNet, adjustedBench.income_net_mo, 'higher_is_good', '$', 'Total after-tax household income per month — salary, side income, rental, and investment income combined.')}
+    ${bar('Total Net Worth', netWorth, adjustedBench.net_worth, 'higher_is_good', '$', 'All assets minus all debts. The clearest single measure of financial position.')}
+    ${bar('Retirement Savings', retirement, adjustedBench.retirement, 'higher_is_good', '$', 'Combined balance across 401(k)/403(b), Roth IRA, Traditional IRA, and HSA accounts.')}
+    ${bar('Liquid Cash', liquidCash, adjustedBench.liquid_cash, 'higher_is_good', '$', 'Checking + savings + emergency fund balances — money you could access immediately without selling anything.')}
+    ${bar('Savings Rate', savingsRate, adjustedBench.savings_rate, 'higher_is_good', '%', 'The share of take-home income you keep rather than spend: (income − expenses) ÷ income × 100.')}
+    ${bar('Housing % of Income', housingPct, 30, 'lower_is_good', '%', 'Mortgage/rent plus property tax, HOA, and insurance, as a percentage of take-home income. Under 30% is the common guideline.')}
+    ${bar('Debt-to-Income Ratio', dti, 25, 'lower_is_good', '%', 'Total monthly minimum debt payments divided by monthly take-home income. Lenders typically want this under 36%.')}
+  </div>
+
+  <div class="panel round">
+    <h2>What's working, what to look at</h2>
+    <div class="score-grid" style="margin-top:14px">${scorecard}</div>
+  </div>
+
+  <div class="panel round">
+    <h2>Suggested changes</h2>
+    <div class="desc">Ranked by potential impact. All are things you can act on this month.</div>
+    <div class="action-list">
+      ${suggestions.map((s,i) => `
+        <div class="action ${s.priority}">
+          <div class="num">${i+1}</div>
+          <div>
+            <h4>${s.title}</h4>
+            <p>${s.body}</p>
+          </div>
+        </div>`).join('')}
+    </div>
+  </div>
+
+  <div class="cta">
+    <h3>Want a deeper review?</h3>
+    <p>This snapshot uses your estimates. For decisions with real money on the line — refinancing, career transitions, retirement planning, tax-loss harvesting — a statement-based audit spots what estimates miss. The full audit reviews 6-12 months of actual bank/credit/investment statements and gives you a signed action plan.</p>
+    <button class="btn btn-primary" onclick="alert('Contact for a full statement-based review. The preview you just completed is a great starting point to bring to that conversation.')">Request Full Audit</button>
+  </div>
+
+  <div class="panel round" style="margin-top:16px">
+    <h2 style="font-size:1.1rem">Report inputs (for your records)</h2>
+    <div class="desc" style="margin-bottom:0;font-size:.82rem">
+      Household: ${hhLabel} · Age ${age} · ${metro} (COL ${colIdx}) · Employment: ${txt('employment')} <br>
+      Income: $${fmt(incomeNet)}/mo net · Expenses: $${fmt(expenses)}/mo · Assets: $${fmt(totalAssets)} · Debts: $${fmt(totalDebt)}<br>
+      <span style="color:var(--good)">🔒 This report was generated in your browser. Nothing was uploaded or saved to any server.</span><br>
+      <span style="color:var(--muted)">Estimates only — not financial, tax, or legal advice. Any action you take is at your own risk and sole responsibility. The creators and affiliates accept no liability. See the full disclaimer on the home page.</span>
+    </div>
+  </div>
+  `;
+
+  document.getElementById('intake').style.display = 'none';
+  const rep = document.getElementById('report');
+  rep.innerHTML = html;
+  rep.style.display = 'block';
+  focusView('#report .back-link');
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
+
+function buildScorecard(d) {
+  const good=[], mid=[], bad=[];
+
+  if (d.savingsRate > 15) good.push(`<strong>Strong savings rate:</strong> ${d.savingsRate.toFixed(0)}% is above average.`);
+  if (d.emergencyMonths >= 3) good.push(`<strong>Solid emergency fund:</strong> ${d.emergencyMonths.toFixed(1)} months of expenses.`);
+  if (d.ccDebt === 0) good.push(`<strong>No revolving CC debt:</strong> Keeps you from expensive interest.`);
+  if (d.retirement > d.adjustedBench.retirement) good.push(`<strong>Retirement ahead of peers:</strong> $${fmt(d.retirement)} vs median $${fmt(d.adjustedBench.retirement)}.`);
+  if (d.netWorth > d.adjustedBench.net_worth * 1.5) good.push(`<strong>Above-average net worth:</strong> Well ahead of your age cohort.`);
+  if (d.housingPct < 25 && d.housingPct > 0) good.push(`<strong>Housing cost is manageable:</strong> ${d.housingPct.toFixed(0)}% of take-home.`);
+  if (d.dti < 20 && d.dti > 0) good.push(`<strong>Low debt-to-income:</strong> ${d.dti.toFixed(0)}%, healthy.`);
+
+  if (d.savingsRate >= 5 && d.savingsRate <= 15) mid.push(`<strong>Savings rate ${d.savingsRate.toFixed(0)}%:</strong> Average. Push toward 15-20% for faster wealth building.`);
+  if (d.emergencyMonths >= 1.5 && d.emergencyMonths < 3) mid.push(`<strong>Partial emergency fund:</strong> ${d.emergencyMonths.toFixed(1)} months. Getting there — target 3+.`);
+  if (d.savingsAPY > 0 && d.savingsAPY < 3.5 && d.savingsBal > 3000) mid.push(`<strong>Savings APY ${d.savingsAPY}%:</strong> HYSAs pay ~4.5%. Easy switch.`);
+  if (d.retirement > d.adjustedBench.retirement * 0.7 && d.retirement <= d.adjustedBench.retirement) mid.push(`<strong>Retirement near median:</strong> Keep contributing consistently.`);
+  if (d.housingPct >= 30 && d.housingPct <= 40) mid.push(`<strong>Housing ${d.housingPct.toFixed(0)}% of income:</strong> Tight but common in ${d.colIdx > 120 ? 'high-COL' : 'expensive'} metros.`);
+  if (d.dti >= 25 && d.dti <= 36) mid.push(`<strong>Moderate DTI: ${d.dti.toFixed(0)}%.</strong> Manageable, avoid taking on new debt.`);
+
+  if (d.ccDebt > 0) bad.push(`<strong>Carrying CC debt:</strong> $${fmt(d.ccDebt)} at 20-30% APR is your #1 issue.`);
+  if (d.emergencyMonths < 1.5) bad.push(`<strong>No emergency buffer:</strong> ${d.emergencyMonths.toFixed(1)} months is risky.`);
+  if (d.savingsRate < 0) bad.push(`<strong>Spending more than you earn:</strong> ${d.savingsRate.toFixed(1)}% savings rate is a red flag.`);
+  if (d.retirement < d.adjustedBench.retirement * 0.5 && d.ab !== '18-24') bad.push(`<strong>Retirement lagging:</strong> Well below median for your age band.`);
+  if (d.housingPct > 40) bad.push(`<strong>Housing too expensive:</strong> ${d.housingPct.toFixed(0)}% of income is unsustainable.`);
+  if (d.dti > 36) bad.push(`<strong>High debt-to-income (${d.dti.toFixed(0)}%):</strong> Focus on paying down.`);
+
+  if (good.length === 0) good.push(`Continue tracking — small consistent wins compound.`);
+  if (mid.length === 0) mid.push(`Nothing borderline — either strong or needs attention.`);
+  if (bad.length === 0) bad.push(`No red flags in the numbers you entered. Keep it up.`);
+
+  return `
+    <div class="score good"><h3>✓ Strengths</h3><ul>${good.slice(0,5).map(x=>`<li>${x}</li>`).join('')}</ul></div>
+    <div class="score warn"><h3>⚠ Watch</h3><ul>${mid.slice(0,5).map(x=>`<li>${x}</li>`).join('')}</ul></div>
+    <div class="score bad"><h3>⚠ Address</h3><ul>${bad.slice(0,5).map(x=>`<li>${x}</li>`).join('')}</ul></div>
+  `;
+}
+</script>
+
+<!-- ================ PROGRESSIVE ENHANCEMENTS ================ -->
+<script>
+// Accessibility + polish. Runs after DOM is parsed (script sits at end of body).
+(function(){
+  function enhance(){
+    // 1) Associate every field label with its control (a11y + clickable labels)
+    document.querySelectorAll('.field').forEach(function(f){
+      var lbl = f.querySelector('label');
+      var ctrl = f.querySelector('input,select,textarea');
+      if (lbl && ctrl && ctrl.id && !lbl.htmlFor) lbl.htmlFor = ctrl.id;
+    });
+    // 2) Footer year
+    var y = document.getElementById('foot-year');
+    if (y) y.textContent = new Date().getFullYear();
+    // 3) Scroll-reveal (skipped for reduced-motion / no IntersectionObserver)
+    var reduce = window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+    if (reduce || !('IntersectionObserver' in window)) return;
+    document.documentElement.classList.add('anim');
+    var sel = '.hero-grid > div, .trust-item, .sec-head, .tool-col, .demo-row, .step-c, .show-grid > *, .stats-band > .stat-b, .quote, .cta-band .container, .disclaimer';
+    var els = Array.prototype.slice.call(document.querySelectorAll(sel));
+    els.forEach(function(el){ el.classList.add('reveal'); });
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if (e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }
+      });
+    }, {rootMargin:'0px 0px -80px 0px', threshold:0.06});
+    els.forEach(function(el){ io.observe(el); });
+  }
+  if (document.readyState !== 'loading') enhance();
+  else document.addEventListener('DOMContentLoaded', enhance);
+})();
+</script>
+
+<!-- ================ REDACTOR LIBS + LOGIC ================ -->
+<!-- pdf.js and pdf-lib are lazy-loaded on demand by ensurePdfLibsLoaded() when the
+     redactor opens, so they never block initial page load for other visitors. -->
+<script>
+if (window.pdfjsLib) {
+  pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+}
+
+const PATTERNS = [
+  {type:'ssn',     label:'SSN',      re:/\b\d{3}-\d{2}-\d{4}\b/g,        mode:'full'},
+  {type:'ein',     label:'EIN',      re:/\b\d{2}-\d{7}\b/g,              mode:'full'},
+  {type:'cc',      label:'Card #',   re:/\b\d{4}[- ]?\d{4}[- ]?\d{4}[- ]?\d{4}\b/g, mode:'mask'},
+  {type:'account', label:'Account #',re:/\b\d{10,17}\b/g,                mode:'mask'},
+  {type:'routing', label:'Routing #',re:/\b\d{9}\b/g,                    mode:'full'},
+  {type:'email',   label:'Email',    re:/\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b/g, mode:'full'},
+  {type:'phone',   label:'Phone',    re:/(?:\+?1[-.\s]?)?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}\b/g, mode:'full'}
+];
+
+let redFiles = [];
+let customTerms = [];
+let redactorInitialized = false;
+
+function loadScript(url) {
+  return new Promise((resolve, reject) => {
+    const existing = Array.from(document.scripts).find(s => s.src === url);
+    if (existing) { resolve(); return; }
+    const s = document.createElement('script');
+    s.src = url;
+    s.onload = () => resolve();
+    s.onerror = () => reject(new Error('Failed to load ' + url));
+    document.head.appendChild(s);
+  });
+}
+
+async function ensurePdfLibsLoaded() {
+  const pdfjsUrls = [
+    'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js',
+    'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/legacy/build/pdf.min.js',
+    'https://unpkg.com/pdfjs-dist@3.11.174/legacy/build/pdf.min.js'
+  ];
+  const pdfjsWorkerUrls = [
+    'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js',
+    'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/legacy/build/pdf.worker.min.js',
+    'https://unpkg.com/pdfjs-dist@3.11.174/legacy/build/pdf.worker.min.js'
+  ];
+  const pdflibUrls = [
+    'https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js',
+    'https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js',
+    'https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js'
+  ];
+
+  if (!window.pdfjsLib) {
+    for (const u of pdfjsUrls) {
+      try { await loadScript(u); } catch (e) { continue; }
+      if (window.pdfjsLib) break;
+    }
+  }
+  if (!window.PDFLib) {
+    for (const u of pdflibUrls) {
+      try { await loadScript(u); } catch (e) { continue; }
+      if (window.PDFLib) break;
+    }
+  }
+
+  if (window.pdfjsLib) {
+    for (const wu of pdfjsWorkerUrls) {
+      try {
+        window.pdfjsLib.GlobalWorkerOptions.workerSrc = wu;
+        break;
+      } catch (e) {}
+    }
+  }
+
+  return !!window.pdfjsLib && !!window.PDFLib;
+}
+
+function showLibError() {
+  const el = document.getElementById('libError');
+  if (el) el.style.display = 'block';
+  const drop = document.getElementById('redDropPanel');
+  if (drop) drop.style.opacity = '0.35';
+}
+function hideLibError() {
+  const el = document.getElementById('libError');
+  if (el) el.style.display = 'none';
+  const drop = document.getElementById('redDropPanel');
+  if (drop) drop.style.opacity = '1';
+}
+
+function initRedactor() {
+  if (redactorInitialized) return;
+  const dropZone = document.getElementById('dropZone');
+  const fileInput = document.getElementById('fileInput');
+  if (!dropZone || !fileInput) return;
+
+  ['dragenter','dragover'].forEach(evt => {
+    dropZone.addEventListener(evt, e => {
+      e.preventDefault(); e.stopPropagation();
+      dropZone.classList.add('dragover');
+    });
+  });
+  ['dragleave','drop'].forEach(evt => {
+    dropZone.addEventListener(evt, e => {
+      e.preventDefault(); e.stopPropagation();
+      dropZone.classList.remove('dragover');
+    });
+  });
+  dropZone.addEventListener('drop', e => {
+    const dropped = Array.from(e.dataTransfer.files || []).filter(f => f.type === 'application/pdf' || f.name.toLowerCase().endsWith('.pdf'));
+    if (dropped.length) handleRedFiles(dropped);
+  });
+  fileInput.addEventListener('change', e => {
+    handleRedFiles(Array.from(e.target.files || []));
+    fileInput.value = '';
+  });
+
+  renderRedTerms();
+  redactorInitialized = true;
+}
+
+async function handleRedFiles(fileList) {
+  document.getElementById('redFilesPanel').style.display = 'block';
+  for (const f of fileList) {
+    redFiles.push({
+      id: Math.random().toString(36).slice(2, 10),
+      file: f, name: f.name, size: f.size,
+      status: 'pending', pages: [], detections: [], error: null, expanded: false
+    });
+  }
+  renderRedFileList();
+  updateRedStats();
+  for (const item of redFiles.filter(x => x.status === 'pending')) {
+    await processRedFile(item);
+  }
+  const genBtn = document.getElementById('generateBtn');
+  if (genBtn) genBtn.disabled = !redFiles.some(f => f.status === 'ready');
+}
+
+async function processRedFile(item) {
+  item.status = 'processing';
+  renderRedFileList();
+  try {
+    const bytes = new Uint8Array(await item.file.arrayBuffer());
+    item.originalBytes = bytes;
+    const pdf = await pdfjsLib.getDocument({data: bytes}).promise;
+    item.pages = [];
+    for (let pn = 1; pn <= pdf.numPages; pn++) {
+      const page = await pdf.getPage(pn);
+      const scale = 2;
+      const viewport = page.getViewport({scale});
+      const canvas = document.createElement('canvas');
+      canvas.width = viewport.width;
+      canvas.height = viewport.height;
+      const ctx = canvas.getContext('2d');
+      await page.render({canvasContext: ctx, viewport}).promise;
+
+      const textContent = await page.getTextContent();
+      const pageDetections = [];
+      for (const it of textContent.items) {
+        if (!it.str || !it.str.trim()) continue;
+        const tx = pdfjsLib.Util.transform(viewport.transform, it.transform);
+        const canvasX = tx[4];
+        const canvasY = tx[5];
+        const fontHeight = Math.hypot(tx[2], tx[3]) || 10;
+        const totalW = it.width * scale;
+
+        for (const pat of PATTERNS) {
+          pat.re.lastIndex = 0;
+          let m;
+          while ((m = pat.re.exec(it.str)) !== null) {
+            const startFrac = m.index / it.str.length;
+            const endFrac = (m.index + m[0].length) / it.str.length;
+            pageDetections.push({
+              id: Math.random().toString(36).slice(2, 10),
+              type: pat.type,
+              label: pat.label,
+              value: m[0],
+              mode: pat.mode,
+              page: pn,
+              x: canvasX + totalW * startFrac - 2,
+              y: canvasY - fontHeight * 1.05,
+              width: totalW * (endFrac - startFrac) + 4,
+              height: fontHeight * 1.3,
+              confirmed: true
+            });
+          }
+        }
+      }
+      pageDetections.sort((a,b)=>b.value.length - a.value.length);
+      const kept = [];
+      for (const d of pageDetections) {
+        const dup = kept.find(k => k.value === d.value && Math.abs(k.x - d.x) < 5 && Math.abs(k.y - d.y) < 5);
+        if (!dup) kept.push(d);
+      }
+      item.pages.push({canvas, viewport, textItems: textContent.items, detections: kept, scale});
+      item.detections.push(...kept);
+    }
+    item.status = 'ready';
+  } catch (err) {
+    console.error(err);
+    item.status = 'error';
+    item.error = err.message || 'Unknown error';
+  }
+  renderRedFileList();
+  updateRedStats();
+  const genBtn = document.getElementById('generateBtn');
+  if (genBtn) genBtn.disabled = !redFiles.some(f => f.status === 'ready');
+}
+
+function renderRedFileList() {
+  const list = document.getElementById('fileList');
+  if (!list) return;
+  list.innerHTML = redFiles.map(item => {
+    const statusClass = 'status-' + item.status;
+    const statusText = {pending:'Pending', processing:'Scanning...', ready:'Ready', error:'Error'}[item.status];
+    const detCount = item.detections.length;
+    const confirmedCount = item.detections.filter(d => d.confirmed).length;
+    const pages = item.pages.length;
+
+    let detHtml = '';
+    if (item.expanded && item.status === 'ready') {
+      detHtml = `<div class="details">
+        <div style="margin-bottom:10px;font-size:.78rem;color:var(--muted)">
+          ${detCount} auto-detected items across ${pages} page${pages===1?'':'s'}.
+          Uncheck any false positives. Account numbers/cards will show only last 4.
+        </div>
+        <div class="detection-list">
+        ${item.detections.map(d => `
+          <div class="detection">
+            <label>
+              <input type="checkbox" ${d.confirmed?'checked':''} onchange="toggleDetection('${item.id}','${d.id}',this.checked)">
+              <span class="dtype type-${d.type}">${d.label}</span>
+              <span class="value">${escapeRedHtml(d.value)}</span>
+              <span class="page">p.${d.page}</span>
+              <span class="mask">${d.mode==='mask' ? '→ ••'+d.value.slice(-4) : '→ ██████'}</span>
+            </label>
+          </div>
+        `).join('')}
+        </div>
+      </div>`;
+    } else if (item.status === 'error') {
+      detHtml = `<div class="details" style="color:var(--bad)">Error: ${escapeRedHtml(item.error || 'Could not process this file')}</div>`;
+    }
+
+    return `
+      <div class="file">
+        <div class="info">
+          <div>📄</div>
+          <div>
+            <div class="fname">${escapeRedHtml(item.name)}</div>
+            <div class="fmeta">${fmtRedSize(item.size)} · ${pages ? pages+' page'+(pages===1?'':'s') : ''} ${detCount ? '· '+detCount+' detections ('+confirmedCount+' confirmed)' : ''}</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span class="fstatus ${statusClass}">${statusText}</span>
+          ${item.status === 'ready' ? `<button class="expand" onclick="toggleExpand('${item.id}')">${item.expanded?'Hide':'Review'} detections</button>` : ''}
+        </div>
+      </div>
+      ${detHtml}`;
+  }).join('');
+}
+
+function updateRedStats() {
+  const totalPages = redFiles.reduce((s,f)=>s+f.pages.length,0);
+  const totalDet = redFiles.reduce((s,f)=>s+f.detections.length,0);
+  const totalConf = redFiles.reduce((s,f)=>s+f.detections.filter(d=>d.confirmed).length,0) + customTerms.length * redFiles.length;
+  const el = id => document.getElementById(id);
+  if (el('s-files')) el('s-files').textContent = redFiles.length;
+  if (el('s-pages')) el('s-pages').textContent = totalPages;
+  if (el('s-det')) el('s-det').textContent = totalDet;
+  if (el('s-conf')) el('s-conf').textContent = totalConf;
+}
+
+function toggleExpand(id) {
+  const item = redFiles.find(f => f.id === id);
+  if (item) item.expanded = !item.expanded;
+  renderRedFileList();
+}
+function toggleDetection(fileId, detId, checked) {
+  const item = redFiles.find(f => f.id === fileId);
+  if (!item) return;
+  const det = item.detections.find(d => d.id === detId);
+  if (det) det.confirmed = checked;
+  updateRedStats();
+}
+
+function addTerm() {
+  const input = document.getElementById('termInput');
+  const val = (input.value || '').trim();
+  if (!val || val.length < 2) return;
+  if (!customTerms.includes(val)) customTerms.push(val);
+  input.value = '';
+  renderRedTerms();
+  updateRedStats();
+}
+function removeTerm(v) {
+  customTerms = customTerms.filter(t => t !== v);
+  renderRedTerms();
+  updateRedStats();
+}
+function renderRedTerms() {
+  const el = document.getElementById('termList');
+  if (!el) return;
+  el.innerHTML = customTerms.length === 0
+    ? '<div style="color:var(--muted);font-size:.8rem">No custom terms yet.</div>'
+    : customTerms.map(t => `<span class="term">${escapeRedHtml(t)} <button onclick="removeTerm('${t.replace(/'/g,"\\'")}')">×</button></span>`).join('');
+}
+
+function resetRedactor() {
+  if (redFiles.length && !confirm('Discard all uploaded documents and start over?')) return;
+  redFiles = [];
+  customTerms = [];
+  renderRedFileList();
+  renderRedTerms();
+  updateRedStats();
+  document.getElementById('redFilesPanel').style.display = 'none';
+  const genBtn = document.getElementById('generateBtn');
+  if (genBtn) genBtn.disabled = true;
+}
+
+async function generateAll() {
+  const btn = document.getElementById('generateBtn');
+  btn.disabled = true;
+  btn.textContent = 'Generating...';
+  try {
+    for (const item of redFiles.filter(f => f.status === 'ready')) {
+      const allDetections = [...item.detections];
+      for (let pi = 0; pi < item.pages.length; pi++) {
+        const page = item.pages[pi];
+        for (const term of customTerms) {
+          for (const it of page.textItems) {
+            if (!it.str) continue;
+            const lower = it.str.toLowerCase();
+            const t = term.toLowerCase();
+            let idx = lower.indexOf(t);
+            while (idx !== -1) {
+              const tx = pdfjsLib.Util.transform(page.viewport.transform, it.transform);
+              const cx = tx[4];
+              const cy = tx[5];
+              const fh = Math.hypot(tx[2], tx[3]) || 10;
+              const w = it.width * page.scale;
+              const startFrac = idx / it.str.length;
+              const endFrac = (idx + term.length) / it.str.length;
+              allDetections.push({
+                type:'custom', label:'Custom', value: term, mode:'full',
+                page: pi + 1,
+                x: cx + w * startFrac - 2,
+                y: cy - fh * 1.05,
+                width: w * (endFrac - startFrac) + 4,
+                height: fh * 1.3,
+                confirmed: true
+              });
+              idx = lower.indexOf(t, idx + 1);
+            }
+          }
+        }
+      }
+      await rebuildPDF(item, allDetections);
+    }
+    btn.textContent = 'Done — Downloaded';
+    setTimeout(() => { btn.textContent = 'Generate Redacted PDFs'; btn.disabled = false; }, 3000);
+  } catch (err) {
+    console.error(err);
+    alert('Error generating redacted PDFs: ' + err.message);
+    btn.textContent = 'Generate Redacted PDFs';
+    btn.disabled = false;
+  }
+}
+
+async function rebuildPDF(item, allDetections) {
+  const { PDFDocument } = PDFLib;
+  const outPdf = await PDFDocument.create();
+  for (let pi = 0; pi < item.pages.length; pi++) {
+    const p = item.pages[pi];
+    const pageDetections = allDetections.filter(d => d.confirmed && d.page === (pi+1));
+    const workCanvas = document.createElement('canvas');
+    workCanvas.width = p.canvas.width;
+    workCanvas.height = p.canvas.height;
+    const ctx = workCanvas.getContext('2d');
+    ctx.drawImage(p.canvas, 0, 0);
+    for (const det of pageDetections) {
+      ctx.fillStyle = det.mode === 'mask' ? '#ffffff' : '#000000';
+      ctx.fillRect(det.x, det.y, det.width, det.height);
+      if (det.mode === 'mask' && det.value.length > 4) {
+        ctx.fillStyle = '#111111';
+        const fontSize = Math.max(10, det.height * 0.55);
+        ctx.font = `600 ${fontSize}px -apple-system, sans-serif`;
+        ctx.textBaseline = 'middle';
+        ctx.fillText('••' + det.value.slice(-4), det.x + 4, det.y + det.height * 0.55);
+      }
+    }
+    const dataUrl = workCanvas.toDataURL('image/png');
+    const pngBytes = base64ToUint8Array(dataUrl.split(',')[1]);
+    const img = await outPdf.embedPng(pngBytes);
+    const pageWidth = workCanvas.width / p.scale;
+    const pageHeight = workCanvas.height / p.scale;
+    const newPage = outPdf.addPage([pageWidth, pageHeight]);
+    newPage.drawImage(img, {x: 0, y: 0, width: pageWidth, height: pageHeight});
+  }
+  const outBytes = await outPdf.save();
+  downloadBytes(outBytes, redactedName(item.name));
+}
+
+function redactedName(name) {
+  const dot = name.lastIndexOf('.');
+  if (dot === -1) return name + '_REDACTED.pdf';
+  return name.slice(0, dot) + '_REDACTED' + name.slice(dot);
+}
+function downloadBytes(bytes, filename) {
+  const blob = new Blob([bytes], {type:'application/pdf'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  document.body.appendChild(a); a.click();
+  setTimeout(() => { URL.revokeObjectURL(url); a.remove(); }, 500);
+}
+function fmtRedSize(bytes) {
+  if (bytes < 1024) return bytes + ' B';
+  if (bytes < 1024*1024) return (bytes/1024).toFixed(1) + ' KB';
+  return (bytes/1024/1024).toFixed(2) + ' MB';
+}
+function escapeRedHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function base64ToUint8Array(base64) {
+  const bin = atob(base64);
+  const arr = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
+  return arr;
+}
+</script>
+</body>
+</html>
