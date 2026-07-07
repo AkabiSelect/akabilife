@@ -2,13 +2,13 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>AkabiLife — Clarity for better decisions</title>
+<title>AkabiLife: Clarity for better decisions</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="description" content="A brutally clear, private read on your income, savings, debt and spending — benchmarked to your age and city. Runs entirely in your browser. No account, no uploads.">
+<meta name="description" content="A brutally clear, private read on your income, savings, debt and spending, benchmarked to your age and city. Runs entirely in your browser. No account, no uploads.">
 <meta name="color-scheme" content="light">
 <meta name="theme-color" content="#FBF3E1">
 <meta property="og:type" content="website">
-<meta property="og:title" content="AkabiLife — Clarity for better decisions">
+<meta property="og:title" content="AkabiLife: Clarity for better decisions">
 <meta property="og:description" content="A private financial health check and document redactor that runs entirely in your browser. No account, no uploads.">
 <meta property="og:site_name" content="AkabiLife">
 <meta name="twitter:card" content="summary">
@@ -20,7 +20,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   /* ============================================================
-     DESIGN SYSTEM — warm editorial palette (Daylight-inspired)
+     DESIGN SYSTEM, warm editorial palette (Daylight-inspired)
      CSS var names kept identical to the original tool so the
      JS-generated report/redactor markup re-themes automatically.
      ============================================================ */
@@ -28,14 +28,14 @@
     /* Surfaces */
     --bg:#FBF3E1;          /* warm cream page */
     --panel:#FFFCF4;       /* card / warm white */
-    --panel2:#F3E8CE;      /* soft sand — inputs, bar tracks */
+    --panel2:#F3E8CE;      /* soft sand, inputs, bar tracks */
     --ink:#211C15;         /* warm near-black text */
-    --muted:#726650;       /* warm taupe — WCAG AA on cream (~5:1) */
+    --muted:#726650;       /* warm taupe, WCAG AA on cream (~5:1) */
     /* Brand */
-    --accent:#CE4A0F;      /* solar orange — AA with white button text (4.6:1) */
+    --accent:#CE4A0F;      /* solar orange, AA with white button text (4.6:1) */
     --accent-deep:#AE3D0B;
     --good:#3D6A4B;        /* forest green (positive) */
-    --warn:#9A6B12;        /* mustard (watch) — AA on light surfaces */
+    --warn:#9A6B12;        /* mustard (watch), AA on light surfaces */
     --bad:#B23A2E;         /* brick red (alert) */
     --neutral:#7A6A4E;     /* warm brown (was indigo) */
     --border:rgba(33,28,21,.13);
@@ -58,7 +58,7 @@
   ::selection{background:var(--accent);color:#fff}
   :focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
   @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
-  /* Scroll-reveal — only active once JS adds .anim, so no-JS users see everything */
+  /* Scroll-reveal, only active once JS adds .anim, so no-JS users see everything */
   html.anim .reveal{opacity:0;transform:translateY(22px)}
   html.anim .reveal.in{opacity:1;transform:none;transition:opacity .6s ease,transform .6s ease}
 
@@ -161,7 +161,7 @@
   .sec-head h2{font-size:clamp(2rem,3.6vw,3.1rem);letter-spacing:-.02em;margin:14px 0 0}
   .sec-head p{font-size:1.08rem;color:var(--ink);opacity:.78;margin-top:16px;line-height:1.6}
 
-  /* Tools — two editorial columns split by a rule */
+  /* Tools, two editorial columns split by a rule */
   .tools-grid{display:grid;grid-template-columns:1fr 1fr;gap:0}
   .tool-col{padding:8px clamp(28px,3vw,48px) 8px 0}
   .tool-col:last-child{border-left:1px solid var(--border);padding:8px 0 8px clamp(28px,3vw,48px)}
@@ -182,7 +182,7 @@
   .demo-card .ctx{font-size:.84rem;color:var(--muted);margin-top:4px}
   .demo-card .go{font-size:.82rem;color:var(--accent);font-weight:600;margin-top:12px;display:inline-block}
 
-  /* How it works — sand band, numbered steps */
+  /* How it works, sand band, numbered steps */
   .band-sand{background:var(--panel2)}
   .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:36px;margin-top:8px}
   .step-c{position:relative}
@@ -216,7 +216,7 @@
   .stat-b .n{font-family:var(--font-serif);font-size:clamp(2.6rem,5vw,4rem);letter-spacing:-.03em;line-height:1}
   .stat-b .l{font-size:.9rem;color:var(--muted);margin-top:8px;max-width:22ch}
 
-  /* Final CTA — full-bleed orange */
+  /* Final CTA, full-bleed orange */
   .cta-band{background:var(--accent);color:#fff;text-align:center}
   .cta-band h2{font-size:clamp(2.2rem,4.6vw,3.6rem);letter-spacing:-.02em;color:#fff}
   .cta-band p{max-width:52ch;margin:18px auto 0;font-size:1.1rem;color:rgba(255,255,255,.9)}
@@ -252,7 +252,7 @@
                display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
 
   /* ============================================================
-     TOOL UI — retuned for the cream theme (classes preserved)
+     TOOL UI, retuned for the cream theme (classes preserved)
      ============================================================ */
   .wrap-tool{max-width:1080px;margin:0 auto;padding:36px 32px 90px}
   .back-link{display:inline-flex;align-items:center;gap:7px;color:var(--muted);
@@ -525,7 +525,7 @@
 <!-- ============================ NAV ============================ -->
 <nav class="nav">
   <div class="container nav-inner">
-    <button class="wordmark" onclick="restartTool()" aria-label="AkabiLife — home">
+    <button class="wordmark" onclick="restartTool()" aria-label="AkabiLife, home">
       <span class="glyph" aria-hidden="true">A</span> <span class="wm-text">AkabiLife</span>
     </button>
     <div class="nav-links">
@@ -559,7 +559,7 @@
       <div>
         <span class="eyebrow">Free · Private · No account</span>
         <h1>See your money the way an <em>auditor</em> would.</h1>
-        <p class="lede">A brutally clear read on your income, savings, debt and spending — benchmarked against real people in your age band and city. It all runs in this browser tab. Nothing is uploaded.</p>
+        <p class="lede">A brutally clear read on your income, savings, debt and spending, benchmarked against real people in your age band and city. It all runs in this browser tab. Nothing is uploaded.</p>
         <div class="hero-actions">
           <button class="btn btn-primary btn-pill btn-lg" onclick="startFinancialCheck()">Start your free check →</button>
           <button class="btn btn-secondary btn-pill btn-lg" onclick="startRedactor()">Redact a document</button>
@@ -614,7 +614,7 @@
         <div class="ic">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
         </div>
-        <div><h4>No account, no name</h4><p>We never ask for your name, email, or address — only your metro, to adjust for cost of living.</p></div>
+        <div><h4>No account, no name</h4><p>We never ask for your name, email, or address, only your metro, to adjust for cost of living.</p></div>
       </div>
       <div class="trust-item">
         <div class="ic">
@@ -630,7 +630,7 @@
     <div class="container">
       <div class="sec-head">
         <span class="eyebrow">Two tools, one goal</span>
-        <h2>Understand your finances — and protect them before you share.</h2>
+        <h2>Understand your finances, and protect them before you share.</h2>
         <p>One tells you honestly where you stand. The other strips the sensitive details out of your statements so you can hand them to an analyst without handing over your identity.</p>
       </div>
 
@@ -638,7 +638,7 @@
         <div class="tool-col">
           <div class="num">01</div>
           <h3>Financial Health Check</h3>
-          <p>Answer ~30 quick questions about your household, income, savings, debts and spending. Get a benchmark report comparing you to peers in your age band and metro — plus specific, ranked improvements.</p>
+          <p>Answer ~30 quick questions about your household, income, savings, debts and spending. Get a benchmark report comparing you to peers in your age band and metro, plus specific, ranked improvements.</p>
           <ul class="tool-list">
             <li>52 US metros with cost-of-living adjustment</li>
             <li>Age-band + household-size peer benchmarks</li>
@@ -654,7 +654,7 @@
           <ul class="tool-list">
             <li>Auto-detects SSN, phone, email, account &amp; card numbers</li>
             <li>Account numbers masked to the last four (••1234)</li>
-            <li>True redaction — the underlying text bytes are removed</li>
+            <li>True redaction, the underlying text bytes are removed</li>
           </ul>
           <button class="btn btn-secondary btn-pill" onclick="startRedactor()">Open the redactor →</button>
         </div>
@@ -690,7 +690,7 @@
         <div class="step-c">
           <div class="idx">1</div>
           <h3>Answer the intake</h3>
-          <p>Five short sections — household, income, assets, debts and expenses. Round numbers are fine; the estimates just need to be honest.</p>
+          <p>Five short sections, household, income, assets, debts and expenses. Round numbers are fine; the estimates just need to be honest.</p>
         </div>
         <div class="step-c">
           <div class="idx">2</div>
@@ -700,7 +700,7 @@
         <div class="step-c">
           <div class="idx">3</div>
           <h3>Act on the list</h3>
-          <p>Get a ranked set of concrete moves — highest-impact first — that you can actually start on this month.</p>
+          <p>Get a ranked set of concrete moves, highest-impact first, that you can actually start on this month.</p>
         </div>
       </div>
     </div>
@@ -727,10 +727,10 @@
         <span class="eyebrow">What you get</span>
         <h2 style="font-size:clamp(1.9rem,3.2vw,2.7rem);margin:14px 0 0">A real report, not a score out of ten.</h2>
         <ul class="show-list">
-          <li><span class="k">◆</span><div><h4>Headline KPIs</h4><p>Net worth, monthly surplus, emergency-fund runway and retirement — each flagged good, watch or address.</p></div></li>
+          <li><span class="k">◆</span><div><h4>Headline KPIs</h4><p>Net worth, monthly surplus, emergency-fund runway and retirement, each flagged good, watch or address.</p></div></li>
           <li><span class="k">◆</span><div><h4>Peer benchmarks</h4><p>See exactly where you sit versus your age band, adjusted for your city's cost of living and household size.</p></div></li>
           <li><span class="k">◆</span><div><h4>Strengths &amp; red flags</h4><p>A plain-language scorecard of what's working, what's borderline, and what needs attention now.</p></div></li>
-          <li><span class="k">◆</span><div><h4>A ranked action plan</h4><p>Specific moves — pay down that 24% card, move idle cash to a 4.5% HYSA — ordered by dollar impact.</p></div></li>
+          <li><span class="k">◆</span><div><h4>A ranked action plan</h4><p>Specific moves, pay down that 24% card, move idle cash to a 4.5% HYSA, ordered by dollar impact.</p></div></li>
         </ul>
         <button class="btn btn-primary btn-pill" style="margin-top:26px" onclick="startFinancialCheck()">Generate my report →</button>
       </div>
@@ -741,7 +741,7 @@
   <section class="sec band-dark">
     <div class="container quote">
       <span class="eyebrow">The honest part</span>
-      <p>Most people have never had their finances audited. <em>Fifteen minutes here</em> shows you what an advisor would charge to tell you — with none of it leaving your screen.</p>
+      <p>Most people have never had their finances audited. <em>Fifteen minutes here</em> shows you what an advisor would charge to tell you, with none of it leaving your screen.</p>
       <div class="by">Not financial advice. A starting point for the conversations that are.</div>
     </div>
   </section>
@@ -773,13 +773,13 @@
   <!-- LEGAL DISCLAIMER -->
   <section id="disclaimer" class="sec band-sand">
     <div class="container disclaimer">
-      <span class="eyebrow">Important — please read</span>
+      <span class="eyebrow">Important, please read</span>
       <h2>Disclaimer &amp; limitation of liability</h2>
       <div class="disclaimer-body">
         <p><strong>Not financial advice.</strong> AkabiLife is an educational and informational tool only. It does not provide financial, investment, tax, legal, accounting, or other professional advice, and nothing on this site is a recommendation, endorsement, or solicitation to buy, sell, or hold any financial product or to adopt any financial strategy. No advisory, fiduciary, or professional relationship is created by your use of this site.</p>
-        <p><strong>Estimates only.</strong> All scores, benchmarks, comparisons, and suggestions are generated automatically from the figures you enter and from generalized, third-party reference data. They are approximations, may be inaccurate, outdated, or incomplete, and are not tailored to your individual circumstances. Cost-of-living and peer-benchmark figures are estimates and may not reflect current conditions. You are solely responsible for independently verifying any information before relying on it.</p>
-        <p><strong>Use at your own risk.</strong> Any decision or action you take based on this site or its outputs is taken entirely at your own risk and is your sole responsibility. Before making any financial decision, consult a qualified, licensed professional — such as a Certified Financial Planner, CPA, or attorney — who can consider your specific situation.</p>
-        <p><strong>No liability.</strong> To the fullest extent permitted by applicable law, the creators, owners, operators, developers, contributors, and affiliates of AkabiLife provide this site “as is” and “as available,” disclaim all warranties of any kind (express or implied, including merchantability, fitness for a particular purpose, accuracy, and non-infringement), and accept no liability whatsoever for any loss or damage of any kind — direct, indirect, incidental, special, punitive, or consequential — arising out of or in connection with your access to, use of, reliance on, or inability to use this site or its outputs, even if advised of the possibility of such damages.</p>
+        <p><strong>Estimates only.</strong> All scores, benchmarks, comparisons, and suggestions are generated automatically from the figures you enter and from publicly available third-party reference data. They are approximations, may be inaccurate, outdated, or incomplete. Cost-of-living and peer-benchmark figures are estimates and may not reflect current conditions. You are solely responsible for independently verifying any information before relying on it.</p>
+        <p><strong>Use at your own risk.</strong> Any decision or action you take based on this site or its outputs is taken entirely at your own risk and is your sole responsibility. Before making any financial decision, consult a qualified, licensed professional, such as a Certified Financial Planner, CPA, or attorney, who can consider your specific situation.</p>
+        <p><strong>No liability.</strong> To the fullest extent permitted by applicable law, the creators, owners, operators, developers, contributors, and affiliates of AkabiLife provide this site “as is” and “as available,” disclaim all warranties of any kind (express or implied, including merchantability, fitness for a particular purpose, accuracy, and non-infringement), and accept no liability whatsoever for any loss or damage of any kind (direct, indirect, incidental, special, punitive, or consequential) arising out of or in connection with your access to, use of, reliance on, or inability to use this site or its outputs, even if advised of the possibility of such damages.</p>
         <p><strong>Your responsibilities.</strong> By using this site you acknowledge and agree that: you are solely responsible for your own financial decisions and for verifying all information; you will not hold the creators, affiliates, or contributors liable for any outcome; and you will not use this site for any fraudulent, unlawful, negligent, or misleading purpose. If you do not agree with these terms, do not use this site.</p>
         <p><strong>Privacy.</strong> This tool runs entirely in your browser. It does not collect, transmit, or store the information you enter; refreshing or closing the page discards it.</p>
       </div>
@@ -791,7 +791,7 @@
     <div class="container">
       <div class="foot-top">
         <div>
-          <button class="wordmark" onclick="restartTool()" aria-label="AkabiLife — home"><span class="glyph" aria-hidden="true">A</span> AkabiLife</button>
+          <button class="wordmark" onclick="restartTool()" aria-label="AkabiLife, home"><span class="glyph" aria-hidden="true">A</span> AkabiLife</button>
           <p class="foot-blurb">A private financial health check and document redactor that runs entirely in your browser.</p>
         </div>
         <div>
@@ -907,7 +907,7 @@
     <!-- STEP 2: INCOME -->
     <div class="panel step" id="step2" style="display:none">
       <h2>Monthly income</h2>
-      <div class="desc">Approximate <strong>after-tax (take-home)</strong> amounts. Average over the last 6–12 months if it varies.</div>
+      <div class="desc">Approximate <strong>after-tax (take-home)</strong> amounts. Average over the last 6-12 months if it varies.</div>
       <div class="grid cols-2">
         <div class="section-title">Employment income</div>
         <div class="field money">
@@ -1008,7 +1008,7 @@
     <!-- STEP 4: DEBTS -->
     <div class="panel step" id="step4" style="display:none">
       <h2>Debts &amp; loans</h2>
-      <div class="desc">Include only balances you're currently carrying. Enter APR if you know it — helps identify highest-cost debt.</div>
+      <div class="desc">Include only balances you're currently carrying. Enter APR if you know it, helps identify highest-cost debt.</div>
       <div class="grid cols-2">
         <div class="section-title">Credit cards (revolving)</div>
         <div class="field money">
@@ -1168,7 +1168,7 @@
     </div>
 
     <div class="privacy-note">
-      <strong>🛡 True redaction:</strong> Each page is rasterized to an image with PII painted over pixel-by-pixel, then a new PDF is built from those images. The original text bytes are <strong>physically gone</strong> — nothing can be copy-pasted from under a redaction. Everything happens in this browser tab; no uploads. Refresh or close = everything discarded.
+      <strong>🛡 True redaction:</strong> Each page is rasterized to an image with PII painted over pixel-by-pixel, then a new PDF is built from those images. The original text bytes are <strong>physically gone</strong>, nothing can be copy-pasted from under a redaction. Everything happens in this browser tab; no uploads. Refresh or close = everything discarded.
     </div>
 
     <div id="libError" style="display:none;background:rgba(178,58,46,.08);border:1px solid rgba(178,58,46,.4);border-radius:11px;padding:16px;font-size:.86rem;color:var(--ink);margin-bottom:16px;line-height:1.6">
@@ -1363,16 +1363,16 @@ document.addEventListener('keydown', (e) => {
 // Explanations for every intake-form field, keyed by input id.
 const FIELD_INFO = {
   age: "Your current age. Used to place you in an age band (e.g. 45-54) so benchmarks compare you to similar peers.",
-  household: "Your household structure — affects which income and expense benchmarks are used for comparison.",
+  household: "Your household structure, affects which income and expense benchmarks are used for comparison.",
   kids: "Number of dependent children under 18 living with you. Larger households get adjusted expense benchmarks.",
   metro: "Your metro area, or the closest major city. Benchmarks are adjusted for local cost of living using this.",
-  employment: "Your current employment status. Context only — doesn't change the math.",
+  employment: "Your current employment status. Context only, doesn't change the math.",
   spouse_emp: "Whether your spouse or partner currently earns income. Leave as N/A if you don't have one.",
-  inc_self: "Your paycheck after taxes, 401(k) contributions, and benefit deductions — the amount that actually lands in your bank account each month.",
+  inc_self: "Your paycheck after taxes, 401(k) contributions, and benefit deductions, the amount that actually lands in your bank account each month.",
   inc_spouse: "Your spouse or partner's monthly take-home pay, after taxes and deductions.",
   inc_rental: "Monthly rental income you collect, after subtracting an estimate for vacancy and expenses.",
   inc_side: "Monthly income from freelance work, gig work, or a side business.",
-  inc_investment: "Monthly dividends or interest income you regularly receive — not one-time capital gains.",
+  inc_investment: "Monthly dividends or interest income you regularly receive, not one-time capital gains.",
   inc_other: "Any other regular monthly income: pension, alimony, child support, disability, etc.",
   ast_checking: "Current balance across all checking accounts.",
   ast_savings: "Current balance across regular savings accounts, not counting a separate emergency fund.",
@@ -1387,7 +1387,7 @@ const FIELD_INFO = {
   ast_rental: "Current value minus remaining mortgage balance on any rental or investment property you own.",
   ast_vehicle: "Current market value of your vehicle(s) minus any remaining auto loan balance.",
   debt_cc: "Total credit card balance you carry from month to month. If you pay your card(s) in full every month, enter 0.",
-  debt_cc_apr: "The average interest rate (APR) across your credit cards. Check a recent statement if unsure — most cards run 20-30%.",
+  debt_cc_apr: "The average interest rate (APR) across your credit cards. Check a recent statement if unsure, most cards run 20-30%.",
   debt_auto: "Combined remaining balance across all auto loans.",
   debt_auto_mo: "Total monthly payment across all auto loans.",
   debt_student: "Combined remaining balance across all student loans.",
@@ -1406,7 +1406,7 @@ const FIELD_INFO = {
   exp_transport: "Monthly gas, EV charging, rideshare, or public transit costs.",
   exp_auto_ins: "Monthly auto insurance premium.",
   exp_life_ins: "Monthly life insurance premium.",
-  exp_health_ins: "Monthly health insurance premium — only if paid out of pocket, not already deducted from your paycheck.",
+  exp_health_ins: "Monthly health insurance premium, only if paid out of pocket, not already deducted from your paycheck.",
   exp_child: "Monthly childcare, daycare, or school-related costs.",
   exp_subs: "Monthly total for subscriptions and memberships: gym, streaming, apps, etc.",
   exp_ent: "Monthly spending on entertainment and hobbies.",
@@ -1414,7 +1414,7 @@ const FIELD_INFO = {
   exp_health: "Monthly out-of-pocket healthcare costs not covered by insurance (copays, prescriptions, etc.).",
   exp_travel: "Average monthly travel/vacation spending. Take your annual travel budget and divide by 12.",
   exp_giving: "Monthly charitable donations or tithing.",
-  exp_misc: "Anything not captured above — a catch-all for miscellaneous monthly spending."
+  exp_misc: "Anything not captured above, a catch-all for miscellaneous monthly spending."
 };
 
 function initFieldInfo() {
@@ -1594,7 +1594,7 @@ function ageBand(age) {
   return "75+";
 }
 function fmt(n, opts={}) {
-  if (n === null || n === undefined || isNaN(n)) return '—';
+  if (n === null || n === undefined || isNaN(n)) return 'N/A';
   const abs = Math.abs(n);
   if (opts.dollar) {
     if (abs >= 1000000) return '$' + (n/1000000).toFixed(1) + 'M';
@@ -1669,7 +1669,7 @@ function generateReport() {
     suggestions.push({
       priority: 'urgent',
       title: 'Pay down credit card debt first',
-      body: `Your $${fmt(ccDebt)} balance at ~${apr}% APR costs about $${fmt(Math.round(annualInterest))}/year in interest. That's your highest-return "investment" — every $1,000 paid off saves $${Math.round(apr*10)}/year guaranteed.`
+      body: `Your $${fmt(ccDebt)} balance at ~${apr}% APR costs about $${fmt(Math.round(annualInterest))}/year in interest. That's your highest-return "investment", every $1,000 paid off saves $${Math.round(apr*10)}/year guaranteed.`
     });
   }
   const savingsAPY = num('ast_savings_apy');
@@ -1716,13 +1716,13 @@ function generateReport() {
     suggestions.push({
       priority: 'med',
       title: 'Subscription audit',
-      body: `$${num('exp_subs')}/mo in subs adds up to $${num('exp_subs')*12}/year. Do a quarterly review — cancel what you didn't use in the last 30 days.`
+      body: `$${num('exp_subs')}/mo in subs adds up to $${num('exp_subs')*12}/year. Do a quarterly review, cancel what you didn't use in the last 30 days.`
     });
   }
   if (savingsRate < 10 && incomeNet > 0) {
     suggestions.push({
       priority: 'high',
-      title: `Savings rate is ${savingsRate.toFixed(1)}% — target 15-20%`,
+      title: `Savings rate is ${savingsRate.toFixed(1)}%, target 15-20%`,
       body: `You're saving $${fmt(surplus)}/mo of your $${fmt(incomeNet)}/mo take-home. Automate transfers on payday so you save first, spend what's left.`
     });
   } else if (savingsRate > 20) {
@@ -1742,7 +1742,7 @@ function generateReport() {
   if (dti > 36) {
     suggestions.push({
       priority: 'urgent',
-      title: `Debt-to-income is ${dti.toFixed(0)}% — high`,
+      title: `Debt-to-income is ${dti.toFixed(0)}%, high`,
       body: `Aim for under 36%. Focus on paying down debt or increasing income before taking on new debt. Consider debt avalanche (highest APR first) or debt snowball (smallest balance first).`
     });
   }
@@ -1750,7 +1750,7 @@ function generateReport() {
   if (suggestions.length === 0) {
     suggestions.push({
       priority: 'med',
-      title: 'You\'re in solid shape — optimize for the long term',
+      title: 'You\'re in solid shape, optimize for the long term',
       body: 'Your basics look healthy. Focus on maximizing tax-advantaged accounts, keeping investment fees low (index funds under 0.1% expense ratio), and estate planning as you accumulate wealth.'
     });
   }
@@ -1826,7 +1826,7 @@ function generateReport() {
       <div class="delta">Savings rate: ${savingsRate.toFixed(1)}%</div>
     </div>
     <div class="kpi ${emergencyMonths >= 3 ? 'good' : 'bad'}">
-      <div class="label">Emergency Fund${infoIcon('Liquid cash (checking + savings + dedicated emergency fund) divided by monthly expenses — how many months you could cover with no income.')}</div>
+      <div class="label">Emergency Fund${infoIcon('Liquid cash (checking + savings + dedicated emergency fund) divided by monthly expenses, how many months you could cover with no income.')}</div>
       <div class="value">${emergencyMonths.toFixed(1)} mo</div>
       <div class="delta">Target: 3-6 months of expenses</div>
     </div>
@@ -1840,10 +1840,10 @@ function generateReport() {
   <div class="panel round">
     <h2>How you compare to peers</h2>
     <div class="desc" style="margin-bottom:14px">Compared to Americans aged ${ab}, adjusted for cost of living in ${metro}${hh !== 'single' ? ' and household size' : ''}. Dashed line = peer median.</div>
-    ${bar('Monthly Net Income', incomeNet, adjustedBench.income_net_mo, 'higher_is_good', '$', 'Total after-tax household income per month — salary, side income, rental, and investment income combined.')}
+    ${bar('Monthly Net Income', incomeNet, adjustedBench.income_net_mo, 'higher_is_good', '$', 'Total after-tax household income per month, salary, side income, rental, and investment income combined.')}
     ${bar('Total Net Worth', netWorth, adjustedBench.net_worth, 'higher_is_good', '$', 'All assets minus all debts. The clearest single measure of financial position.')}
     ${bar('Retirement Savings', retirement, adjustedBench.retirement, 'higher_is_good', '$', 'Combined balance across 401(k)/403(b), Roth IRA, Traditional IRA, and HSA accounts.')}
-    ${bar('Liquid Cash', liquidCash, adjustedBench.liquid_cash, 'higher_is_good', '$', 'Checking + savings + emergency fund balances — money you could access immediately without selling anything.')}
+    ${bar('Liquid Cash', liquidCash, adjustedBench.liquid_cash, 'higher_is_good', '$', 'Checking + savings + emergency fund balances, money you could access immediately without selling anything.')}
     ${bar('Savings Rate', savingsRate, adjustedBench.savings_rate, 'higher_is_good', '%', 'The share of take-home income you keep rather than spend: (income − expenses) ÷ income × 100.')}
     ${bar('Housing % of Income', housingPct, 30, 'lower_is_good', '%', 'Mortgage/rent plus property tax, HOA, and insurance, as a percentage of take-home income. Under 30% is the common guideline.')}
     ${bar('Debt-to-Income Ratio', dti, 25, 'lower_is_good', '%', 'Total monthly minimum debt payments divided by monthly take-home income. Lenders typically want this under 36%.')}
@@ -1871,7 +1871,7 @@ function generateReport() {
 
   <div class="cta">
     <h3>Want a deeper review?</h3>
-    <p>This snapshot uses your estimates. For decisions with real money on the line — refinancing, career transitions, retirement planning, tax-loss harvesting — a statement-based audit spots what estimates miss. The full audit reviews 6-12 months of actual bank/credit/investment statements and gives you a signed action plan.</p>
+    <p>This snapshot uses your estimates. For decisions with real money on the line (refinancing, career transitions, retirement planning, tax-loss harvesting) a statement-based audit spots what estimates miss. The full audit reviews 6-12 months of actual bank/credit/investment statements and gives you a signed action plan.</p>
     <a class="btn btn-primary" href="https://www.fiverr.com/dbrewer520?public_mode=true" target="_blank" rel="noopener noreferrer">Request Full Audit on Fiverr →</a>
   </div>
 
@@ -1881,7 +1881,7 @@ function generateReport() {
       Household: ${hhLabel} · Age ${age} · ${metro} (COL ${colIdx}) · Employment: ${txt('employment')} <br>
       Income: $${fmt(incomeNet)}/mo net · Expenses: $${fmt(expenses)}/mo · Assets: $${fmt(totalAssets)} · Debts: $${fmt(totalDebt)}<br>
       <span style="color:var(--good)">🔒 This report was generated in your browser. Nothing was uploaded or saved to any server.</span><br>
-      <span style="color:var(--muted)">Estimates only — not financial, tax, or legal advice. Any action you take is at your own risk and sole responsibility. The creators and affiliates accept no liability. See the full disclaimer on the home page.</span>
+      <span style="color:var(--muted)">Estimates only, not financial, tax, or legal advice. Any action you take is at your own risk and sole responsibility. The creators and affiliates accept no liability. See the full disclaimer on the home page.</span>
     </div>
   </div>
   `;
@@ -1907,7 +1907,7 @@ function buildScorecard(d) {
   if (d.dti < 20 && d.dti > 0) good.push(`<strong>Low debt-to-income:</strong> ${d.dti.toFixed(0)}%, healthy.`);
 
   if (d.savingsRate >= 5 && d.savingsRate <= 15) mid.push(`<strong>Savings rate ${d.savingsRate.toFixed(0)}%:</strong> Average. Push toward 15-20% for faster wealth building.`);
-  if (d.emergencyMonths >= 1.5 && d.emergencyMonths < 3) mid.push(`<strong>Partial emergency fund:</strong> ${d.emergencyMonths.toFixed(1)} months. Getting there — target 3+.`);
+  if (d.emergencyMonths >= 1.5 && d.emergencyMonths < 3) mid.push(`<strong>Partial emergency fund:</strong> ${d.emergencyMonths.toFixed(1)} months. Getting there, target 3+.`);
   if (d.savingsAPY > 0 && d.savingsAPY < 3.5 && d.savingsBal > 3000) mid.push(`<strong>Savings APY ${d.savingsAPY}%:</strong> HYSAs pay ~4.5%. Easy switch.`);
   if (d.retirement > d.adjustedBench.retirement * 0.7 && d.retirement <= d.adjustedBench.retirement) mid.push(`<strong>Retirement near median:</strong> Keep contributing consistently.`);
   if (d.housingPct >= 30 && d.housingPct <= 40) mid.push(`<strong>Housing ${d.housingPct.toFixed(0)}% of income:</strong> Tight but common in ${d.colIdx > 120 ? 'high-COL' : 'expensive'} metros.`);
@@ -1920,8 +1920,8 @@ function buildScorecard(d) {
   if (d.housingPct > 40) bad.push(`<strong>Housing too expensive:</strong> ${d.housingPct.toFixed(0)}% of income is unsustainable.`);
   if (d.dti > 36) bad.push(`<strong>High debt-to-income (${d.dti.toFixed(0)}%):</strong> Focus on paying down.`);
 
-  if (good.length === 0) good.push(`Continue tracking — small consistent wins compound.`);
-  if (mid.length === 0) mid.push(`Nothing borderline — either strong or needs attention.`);
+  if (good.length === 0) good.push(`Continue tracking, small consistent wins compound.`);
+  if (mid.length === 0) mid.push(`Nothing borderline, either strong or needs attention.`);
   if (bad.length === 0) bad.push(`No red flags in the numbers you entered. Keep it up.`);
 
   return `
@@ -2324,7 +2324,7 @@ async function generateAll() {
       }
       await rebuildPDF(item, allDetections);
     }
-    btn.textContent = 'Done — Downloaded';
+    btn.textContent = 'Done, Downloaded';
     setTimeout(() => { btn.textContent = 'Generate Redacted PDFs'; btn.disabled = false; }, 3000);
   } catch (err) {
     console.error(err);
