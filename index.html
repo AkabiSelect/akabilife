@@ -614,7 +614,7 @@
         <div class="ic">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
         </div>
-        <div><h4>No account, no name</h4><p>We never ask for your name, email, or address, only your metro, to adjust for cost of living.</p></div>
+        <div><h4>No account, no name</h4><p>We never ask for your name, email, or address. Just your metro, so we can adjust for cost of living.</p></div>
       </div>
       <div class="trust-item">
         <div class="ic">
@@ -630,7 +630,7 @@
     <div class="container">
       <div class="sec-head">
         <span class="eyebrow">Two tools, one goal</span>
-        <h2>Understand your finances, and protect them before you share.</h2>
+        <h2>Understand your finances, then protect them before you share.</h2>
         <p>One tells you honestly where you stand. The other strips the sensitive details out of your statements so you can hand them to an analyst without handing over your identity.</p>
       </div>
 
@@ -654,7 +654,7 @@
           <ul class="tool-list">
             <li>Auto-detects SSN, phone, email, account &amp; card numbers</li>
             <li>Account numbers masked to the last four (••1234)</li>
-            <li>True redaction, the underlying text bytes are removed</li>
+            <li>True redaction: the underlying text bytes are removed</li>
           </ul>
           <button class="btn btn-secondary btn-pill" onclick="startRedactor()">Open the redactor →</button>
         </div>
@@ -690,7 +690,7 @@
         <div class="step-c">
           <div class="idx">1</div>
           <h3>Answer the intake</h3>
-          <p>Five short sections, household, income, assets, debts and expenses. Round numbers are fine; the estimates just need to be honest.</p>
+          <p>Five short sections: household, income, assets, debts, and expenses. Round numbers are fine; the estimates just need to be honest.</p>
         </div>
         <div class="step-c">
           <div class="idx">2</div>
@@ -700,7 +700,7 @@
         <div class="step-c">
           <div class="idx">3</div>
           <h3>Act on the list</h3>
-          <p>Get a ranked set of concrete moves, highest-impact first, that you can actually start on this month.</p>
+          <p>Get a ranked set of concrete moves (highest-impact first) you can actually start on this month.</p>
         </div>
       </div>
     </div>
@@ -727,10 +727,10 @@
         <span class="eyebrow">What you get</span>
         <h2 style="font-size:clamp(1.9rem,3.2vw,2.7rem);margin:14px 0 0">A real report, not a score out of ten.</h2>
         <ul class="show-list">
-          <li><span class="k">◆</span><div><h4>Headline KPIs</h4><p>Net worth, monthly surplus, emergency-fund runway and retirement, each flagged good, watch or address.</p></div></li>
+          <li><span class="k">◆</span><div><h4>Headline KPIs</h4><p>Net worth, monthly surplus, emergency-fund runway and retirement. Each one flagged good, watch, or address.</p></div></li>
           <li><span class="k">◆</span><div><h4>Peer benchmarks</h4><p>See exactly where you sit versus your age band, adjusted for your city's cost of living and household size.</p></div></li>
           <li><span class="k">◆</span><div><h4>Strengths &amp; red flags</h4><p>A plain-language scorecard of what's working, what's borderline, and what needs attention now.</p></div></li>
-          <li><span class="k">◆</span><div><h4>A ranked action plan</h4><p>Specific moves, pay down that 24% card, move idle cash to a 4.5% HYSA, ordered by dollar impact.</p></div></li>
+          <li><span class="k">◆</span><div><h4>A ranked action plan</h4><p>Specific moves like paying down that 24% card or shifting idle cash to a 4.5% HYSA, ordered by dollar impact.</p></div></li>
         </ul>
         <button class="btn btn-primary btn-pill" style="margin-top:26px" onclick="startFinancialCheck()">Generate my report →</button>
       </div>
@@ -741,7 +741,7 @@
   <section class="sec band-dark">
     <div class="container quote">
       <span class="eyebrow">The honest part</span>
-      <p>Most people have never had their finances audited. <em>Fifteen minutes here</em> shows you what an advisor would charge to tell you, with none of it leaving your screen.</p>
+      <p>Most people have never had their finances audited. <em>Fifteen minutes here</em> shows you what an advisor would charge to tell you, and none of it leaves your screen.</p>
       <div class="by">Not financial advice. A starting point for the conversations that are.</div>
     </div>
   </section>
@@ -773,7 +773,7 @@
   <!-- LEGAL DISCLAIMER -->
   <section id="disclaimer" class="sec band-sand">
     <div class="container disclaimer">
-      <span class="eyebrow">Important, please read</span>
+      <span class="eyebrow">Important · please read</span>
       <h2>Disclaimer &amp; limitation of liability</h2>
       <div class="disclaimer-body">
         <p><strong>Not financial advice.</strong> AkabiLife is an educational and informational tool only. It does not provide financial, investment, tax, legal, accounting, or other professional advice, and nothing on this site is a recommendation, endorsement, or solicitation to buy, sell, or hold any financial product or to adopt any financial strategy. No advisory, fiduciary, or professional relationship is created by your use of this site.</p>
@@ -1363,12 +1363,12 @@ document.addEventListener('keydown', (e) => {
 // Explanations for every intake-form field, keyed by input id.
 const FIELD_INFO = {
   age: "Your current age. Used to place you in an age band (e.g. 45-54) so benchmarks compare you to similar peers.",
-  household: "Your household structure, affects which income and expense benchmarks are used for comparison.",
+  household: "Your household structure. It affects which income and expense benchmarks you're compared against.",
   kids: "Number of dependent children under 18 living with you. Larger households get adjusted expense benchmarks.",
   metro: "Your metro area, or the closest major city. Benchmarks are adjusted for local cost of living using this.",
-  employment: "Your current employment status. Context only, doesn't change the math.",
+  employment: "Your current employment status. For context only; it doesn't change the math.",
   spouse_emp: "Whether your spouse or partner currently earns income. Leave as N/A if you don't have one.",
-  inc_self: "Your paycheck after taxes, 401(k) contributions, and benefit deductions, the amount that actually lands in your bank account each month.",
+  inc_self: "Your paycheck after taxes, 401(k) contributions, and benefit deductions: the amount that actually lands in your bank account each month.",
   inc_spouse: "Your spouse or partner's monthly take-home pay, after taxes and deductions.",
   inc_rental: "Monthly rental income you collect, after subtracting an estimate for vacancy and expenses.",
   inc_side: "Monthly income from freelance work, gig work, or a side business.",
@@ -1387,7 +1387,7 @@ const FIELD_INFO = {
   ast_rental: "Current value minus remaining mortgage balance on any rental or investment property you own.",
   ast_vehicle: "Current market value of your vehicle(s) minus any remaining auto loan balance.",
   debt_cc: "Total credit card balance you carry from month to month. If you pay your card(s) in full every month, enter 0.",
-  debt_cc_apr: "The average interest rate (APR) across your credit cards. Check a recent statement if unsure, most cards run 20-30%.",
+  debt_cc_apr: "The average interest rate (APR) across your credit cards. Check a recent statement if unsure; most cards run 20-30%.",
   debt_auto: "Combined remaining balance across all auto loans.",
   debt_auto_mo: "Total monthly payment across all auto loans.",
   debt_student: "Combined remaining balance across all student loans.",
@@ -1669,7 +1669,7 @@ function generateReport() {
     suggestions.push({
       priority: 'urgent',
       title: 'Pay down credit card debt first',
-      body: `Your $${fmt(ccDebt)} balance at ~${apr}% APR costs about $${fmt(Math.round(annualInterest))}/year in interest. That's your highest-return "investment", every $1,000 paid off saves $${Math.round(apr*10)}/year guaranteed.`
+      body: `Your $${fmt(ccDebt)} balance at ~${apr}% APR costs about $${fmt(Math.round(annualInterest))}/year in interest. That's your highest-return "investment." Every $1,000 you pay off saves about $${Math.round(apr*10)}/year, guaranteed.`
     });
   }
   const savingsAPY = num('ast_savings_apy');
@@ -1716,13 +1716,13 @@ function generateReport() {
     suggestions.push({
       priority: 'med',
       title: 'Subscription audit',
-      body: `$${num('exp_subs')}/mo in subs adds up to $${num('exp_subs')*12}/year. Do a quarterly review, cancel what you didn't use in the last 30 days.`
+      body: `$${num('exp_subs')}/mo in subs adds up to $${num('exp_subs')*12}/year. Do a quarterly review and cancel what you didn't use in the last 30 days.`
     });
   }
   if (savingsRate < 10 && incomeNet > 0) {
     suggestions.push({
       priority: 'high',
-      title: `Savings rate is ${savingsRate.toFixed(1)}%, target 15-20%`,
+      title: `Savings rate is ${savingsRate.toFixed(1)}% (aim for 15-20%)`,
       body: `You're saving $${fmt(surplus)}/mo of your $${fmt(incomeNet)}/mo take-home. Automate transfers on payday so you save first, spend what's left.`
     });
   } else if (savingsRate > 20) {
@@ -1742,7 +1742,7 @@ function generateReport() {
   if (dti > 36) {
     suggestions.push({
       priority: 'urgent',
-      title: `Debt-to-income is ${dti.toFixed(0)}%, high`,
+      title: `Debt-to-income is ${dti.toFixed(0)}% (that's high)`,
       body: `Aim for under 36%. Focus on paying down debt or increasing income before taking on new debt. Consider debt avalanche (highest APR first) or debt snowball (smallest balance first).`
     });
   }
@@ -1750,7 +1750,7 @@ function generateReport() {
   if (suggestions.length === 0) {
     suggestions.push({
       priority: 'med',
-      title: 'You\'re in solid shape, optimize for the long term',
+      title: 'You\'re in solid shape. Now optimize for the long term',
       body: 'Your basics look healthy. Focus on maximizing tax-advantaged accounts, keeping investment fees low (index funds under 0.1% expense ratio), and estate planning as you accumulate wealth.'
     });
   }
@@ -1844,7 +1844,7 @@ function generateReport() {
     ${bar('Total Net Worth', netWorth, adjustedBench.net_worth, 'higher_is_good', '$', 'All assets minus all debts. The clearest single measure of financial position.')}
     ${bar('Retirement Savings', retirement, adjustedBench.retirement, 'higher_is_good', '$', 'Combined balance across 401(k)/403(b), Roth IRA, Traditional IRA, and HSA accounts.')}
     ${bar('Liquid Cash', liquidCash, adjustedBench.liquid_cash, 'higher_is_good', '$', 'Checking + savings + emergency fund balances, money you could access immediately without selling anything.')}
-    ${bar('Savings Rate', savingsRate, adjustedBench.savings_rate, 'higher_is_good', '%', 'The share of take-home income you keep rather than spend: (income − expenses) ÷ income × 100.')}
+    ${bar('Savings Rate', savingsRate, adjustedBench.savings_rate, 'higher_is_good', '%', 'The share of take-home income you keep rather than spend: (income - expenses) ÷ income × 100.')}
     ${bar('Housing % of Income', housingPct, 30, 'lower_is_good', '%', 'Mortgage/rent plus property tax, HOA, and insurance, as a percentage of take-home income. Under 30% is the common guideline.')}
     ${bar('Debt-to-Income Ratio', dti, 25, 'lower_is_good', '%', 'Total monthly minimum debt payments divided by monthly take-home income. Lenders typically want this under 36%.')}
   </div>
@@ -1907,11 +1907,11 @@ function buildScorecard(d) {
   if (d.dti < 20 && d.dti > 0) good.push(`<strong>Low debt-to-income:</strong> ${d.dti.toFixed(0)}%, healthy.`);
 
   if (d.savingsRate >= 5 && d.savingsRate <= 15) mid.push(`<strong>Savings rate ${d.savingsRate.toFixed(0)}%:</strong> Average. Push toward 15-20% for faster wealth building.`);
-  if (d.emergencyMonths >= 1.5 && d.emergencyMonths < 3) mid.push(`<strong>Partial emergency fund:</strong> ${d.emergencyMonths.toFixed(1)} months. Getting there, target 3+.`);
+  if (d.emergencyMonths >= 1.5 && d.emergencyMonths < 3) mid.push(`<strong>Partial emergency fund:</strong> ${d.emergencyMonths.toFixed(1)} months. Getting there. Aim for 3+ months.`);
   if (d.savingsAPY > 0 && d.savingsAPY < 3.5 && d.savingsBal > 3000) mid.push(`<strong>Savings APY ${d.savingsAPY}%:</strong> HYSAs pay ~4.5%. Easy switch.`);
   if (d.retirement > d.adjustedBench.retirement * 0.7 && d.retirement <= d.adjustedBench.retirement) mid.push(`<strong>Retirement near median:</strong> Keep contributing consistently.`);
   if (d.housingPct >= 30 && d.housingPct <= 40) mid.push(`<strong>Housing ${d.housingPct.toFixed(0)}% of income:</strong> Tight but common in ${d.colIdx > 120 ? 'high-COL' : 'expensive'} metros.`);
-  if (d.dti >= 25 && d.dti <= 36) mid.push(`<strong>Moderate DTI: ${d.dti.toFixed(0)}%.</strong> Manageable, avoid taking on new debt.`);
+  if (d.dti >= 25 && d.dti <= 36) mid.push(`<strong>Moderate DTI: ${d.dti.toFixed(0)}%.</strong> Manageable, but avoid taking on new debt.`);
 
   if (d.ccDebt > 0) bad.push(`<strong>Carrying CC debt:</strong> $${fmt(d.ccDebt)} at 20-30% APR is your #1 issue.`);
   if (d.emergencyMonths < 1.5) bad.push(`<strong>No emergency buffer:</strong> ${d.emergencyMonths.toFixed(1)} months is risky.`);
@@ -1920,8 +1920,8 @@ function buildScorecard(d) {
   if (d.housingPct > 40) bad.push(`<strong>Housing too expensive:</strong> ${d.housingPct.toFixed(0)}% of income is unsustainable.`);
   if (d.dti > 36) bad.push(`<strong>High debt-to-income (${d.dti.toFixed(0)}%):</strong> Focus on paying down.`);
 
-  if (good.length === 0) good.push(`Continue tracking, small consistent wins compound.`);
-  if (mid.length === 0) mid.push(`Nothing borderline, either strong or needs attention.`);
+  if (good.length === 0) good.push(`Continue tracking. Small, consistent wins compound.`);
+  if (mid.length === 0) mid.push(`Nothing borderline; it's either strong or needs attention.`);
   if (bad.length === 0) bad.push(`No red flags in the numbers you entered. Keep it up.`);
 
   return `
